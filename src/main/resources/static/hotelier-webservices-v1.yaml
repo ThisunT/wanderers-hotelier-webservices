@@ -1,0 +1,316 @@
+openapi: 3.0.1
+info:
+  title: Wanderers Hotelier Webservices
+  version: 0.0.1
+  description: Wanderers webservices for awesome hoteliers.
+
+tags:
+  - name: accommodation
+    description: Accommodation Controller
+  - name: booking
+    description: Booking Controller
+
+paths:
+  /accommodations:
+    get:
+      tags:
+        - accommodation
+      summary: Get accommodations
+      description: Get accommodations filtered by several parameters or not
+      operationId: getAccommodations
+      parameters:
+        - name: hotelierId
+          in: query
+          description: An identifier to the hotelier
+          required: true
+          schema:
+            type: string
+        - name: rating
+          in: query
+          description: Value of the interested rating
+          required: false
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: Value of the interested city
+          required: false
+          schema:
+            type: string
+        - name: reputationBadge
+          in: query
+          description: Value of the interested reputation badge
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: A list of accommodations.
+                items:
+                  $ref: '#/components/schemas/Accommodation'
+    post:
+      tags:
+        - accommodation
+      summary: Create a new accommodation item
+      description: Create a new accommodation item given a hotelier
+      operationId: createAccommodation
+      parameters:
+        - name: Hotelier-Id
+          in: header
+          description: Identifier of the hotelier (to mimic authorization)
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Payload of the accommodation creation request.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Accommodation'
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accommodation'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /accommodations/{id}:
+    get:
+      tags:
+        - accommodation
+      summary: Get accommodation by id
+      description: Get accommodation by the database identifier
+      operationId: getAccommodationById
+      parameters:
+        - name: id
+          in: path
+          description: Unique identifier of the accommodation
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accommodation'
+    delete:
+      tags:
+        - accommodation
+      summary: Delete an accommodation
+      description: Delete accommodation by the database identifier
+      operationId: deleteAccommodationById
+      parameters:
+        - name: Hotelier-Id
+          in: header
+          description: Identifier of the hotelier (to mimic authorization)
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Unique identifier of the accommodation
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Deleted
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+    patch:
+      tags:
+        - accommodation
+      summary: Update accommodation
+      description: Update accommodation fields by id
+      operationId: updateAccommodationById
+      parameters:
+        - name: Hotelier-Id
+          in: header
+          description: Identifier of the hotelier (to mimic authorization)
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: Unique identifier of the accommodation
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Payload of the accommodation creation request.
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties: {}
+        required: true
+      responses:
+        204:
+          description: Updated
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+
+  /bookings:
+    post:
+      tags:
+        - booking
+      summary: Create a new booking
+      description: Create a new booking given the user and accommodation id
+      operationId: submitBooking
+      parameters:
+        - name: Is-Valid-Token
+          in: header
+          description: A valid user token (to mimic a valid session)
+          required: false
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        description: Payload of the booking submit request.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Booking'
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        410:
+          description: Gone
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+components:
+  schemas:
+    Accommodation:
+      title: Accommodation
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 10
+          description: Name of the accommodation. Following words are not accepted ["Free", "Offer", "Book", "Website"]
+        rating:
+          type: integer
+          minimum: 0
+          maximum: 5
+          description: Number of total items of the order.
+        category:
+          type: string
+          enum:
+            - hotel
+            - alternative
+            - hostel
+            - lodge
+            - resort
+            - guest-house
+          description: Type of the accommodation
+        location:
+          $ref: '#/components/schemas/Location'
+        image:
+          type: string
+          format: uri
+          description: URL of the image
+        reputation:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          description: Reputation of the accommodation
+        reputation_badge:
+          type: string
+          enum:
+            - green
+            - yellow
+            - red
+          description: Type of the reputation badge
+        price:
+          type: integer
+          description: Price of the accommodation
+        availability:
+          type: integer
+          description: Available number of accommodation units
+
+    Location:
+      title: Location
+      type: object
+      properties:
+        city:
+          type: string
+          description: City of the accommodation
+        state:
+          type: string
+          description: State of the accommodation
+        country:
+          type: string
+          description: Country of the accommodation
+        zip_code:
+          type: integer
+          minLength: 5
+          maxLength: 5
+          description: Zip code of the accommodation
+        address:
+          type: string
+          description: Address of the accommodation
+
+    Booking:
+      title: Booking
+      type: object
+      properties:
+        accommodation_id:
+          type: integer
+          description: Identifier of the accommodation
+        customer_id:
+          type: integer
+          description: Identifier of the customer
+
+    ExceptionResponse:
+      title: ExceptionResponse
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+        - message
+
+
+
+
