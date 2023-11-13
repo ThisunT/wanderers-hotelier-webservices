@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.6.9'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.openapi.generator' version '6.3.0'
 }
 
 group = 'com.wanderers'
@@ -16,12 +17,62 @@ repositories {
 }
 
 dependencies {
+	annotationProcessor 'org.projectlombok:lombok'
+
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.8'
+	implementation group: 'io.swagger.core.v3', name: 'swagger-models', version: '2.2.8'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.7.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('bootBuildImage') {
-	builder = 'paketobuildpacks/builder-jammy-base:latest'
+openApiGenerate {
+	generatorName = "spring"
+	validateSpec = true
+	inputSpec = "$projectDir/src/main/resources/static/hotelier-webservices-v1.yaml"
+	outputDir = "$buildDir/generated/openapi"
+	apiPackage = "com.wanderers.hotelier_webservices.rest.api"
+	modelPackage = "com.wanderers.hotelier_webservices.rest.model"
+	configOptions = [
+			"dateLibrary": "java8",
+			"hideGenerationTimestamp": "true",
+			"delegatePattern": "true",
+			"library": "spring-boot",
+			"serializableModel": "true",
+			"useBeanValidation": "true",
+			"useTags": "true",
+			"implicitHeaders": "true",
+			"openApiNullable": "false"
+	]
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs("$buildDir/generated/openapi/src/main/java")
+		}
+	}
+}
+
+tasks.withType(JavaCompile) {
+	dependsOn(tasks.openApiGenerate)
+}
+
+task buildZip(type: Zip) {
+	from compileJava
+	from processResources
+	into('lib') {
+		from configurations.compileClasspath
+	}
+}
+
+build.dependsOn buildZip
+
+springBoot {
+	mainClass = 'com.wanderers.hotelier_webservices.HotelierWebservicesApplication'
 }
 
 tasks.named('test') {
