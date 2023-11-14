@@ -52,7 +52,7 @@ paths:
                 type: array
                 description: A list of accommodations.
                 items:
-                  $ref: '#/components/schemas/Accommodation'
+                  $ref: '#/components/schemas/AccommodationResponseBody'
     post:
       tags:
         - accommodation
@@ -67,11 +67,11 @@ paths:
           schema:
             type: string
       requestBody:
-        description: Payload of the accommodation creation request.
+        description: Body of the accommodation creation request.
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Accommodation'
+              $ref: '#/components/schemas/AccommodationRequestBody'
         required: true
       responses:
         201:
@@ -79,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Accommodation'
+                $ref: '#/components/schemas/AccommodationResponseBody'
         400:
           description: Bad Request
           content:
@@ -113,7 +113,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Accommodation'
+                $ref: '#/components/schemas/AccommodationResponseBody'
     delete:
       tags:
         - accommodation
@@ -162,7 +162,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: Payload of the accommodation creation request.
+        description: Body of the accommodation creation request.
         content:
           'application/json':
             schema:
@@ -196,7 +196,7 @@ paths:
             type: boolean
             default: false
       requestBody:
-        description: Payload of the booking submit request.
+        description: Body of the booking submit request.
         content:
           'application/json':
             schema:
@@ -218,8 +218,8 @@ paths:
 
 components:
   schemas:
-    Accommodation:
-      title: Accommodation
+    AccommodationRequestBody:
+      title: Accommodation Request Body
       type: object
       properties:
         name:
@@ -230,7 +230,7 @@ components:
           type: integer
           minimum: 0
           maximum: 5
-          description: Number of total items of the order.
+          description: Rating of the accommodation.
         category:
           type: string
           enum:
@@ -245,13 +245,36 @@ components:
           $ref: '#/components/schemas/Location'
         image:
           type: string
-          format: uri
+          pattern: '[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
           description: URL of the image
         reputation:
           type: integer
           minimum: 0
           maximum: 1000
           description: Reputation of the accommodation
+        price:
+          type: integer
+          description: Price of the accommodation
+        availability:
+          type: integer
+          description: Available number of accommodation units
+      required:
+        - name
+        - rating
+        - category
+        - location
+        - image
+        - reputation
+        - price
+        - availability
+
+    AccommodationResponseBody:
+      title: Accommodation Response Body
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identifier of the accommodation
         reputation_badge:
           type: string
           enum:
@@ -259,12 +282,9 @@ components:
             - yellow
             - red
           description: Type of the reputation badge
-        price:
-          type: integer
-          description: Price of the accommodation
-        availability:
-          type: integer
-          description: Available number of accommodation units
+      allOf:
+        - $ref: '#/components/schemas/AccommodationRequestBody'
+
 
     Location:
       title: Location
@@ -287,6 +307,10 @@ components:
         address:
           type: string
           description: Address of the accommodation
+      required:
+        - city
+        - country
+        - zip_code
 
     Booking:
       title: Booking
@@ -300,7 +324,7 @@ components:
           description: Identifier of the customer
 
     ExceptionResponse:
-      title: ExceptionResponse
+      title: Exception Response
       type: object
       properties:
         error:
