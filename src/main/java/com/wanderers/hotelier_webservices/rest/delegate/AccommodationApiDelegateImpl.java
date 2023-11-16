@@ -3,6 +3,7 @@ package com.wanderers.hotelier_webservices.rest.delegate;
 import com.wanderers.hotelier_webservices.mapper.AccommodationMapper;
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate;
 import com.wanderers.hotelier_webservices.rest.exception.HotelierIdMissingException;
+import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
@@ -74,6 +75,17 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
         AccommodationResponseBody accommodationsResponse = accommodationMapper.mapToRestAccommodation(accommodationDto);
 
         return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateAccommodationById(String id, AccommodationPatchBody body) {
+        var hotelierId = getHotelierId();
+
+        validator.validateAccommodationPatch(id, body, hotelierId);
+
+        accommodationService.patchAccommodation(id, body);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private String getHotelierId() {

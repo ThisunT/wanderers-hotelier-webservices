@@ -1,5 +1,6 @@
 package com.wanderers.hotelier_webservices.server.service;
 
+import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -56,6 +58,20 @@ public class AccommodationService {
             throw e;
         } catch (Exception e) {
             throw new AccommodationServiceException("Failed getting accommodation by id", e);
+        }
+    }
+
+    @SneakyThrows
+    public void patchAccommodation(String id, AccommodationPatchBody accommodationDto) {
+        try {
+            if (accommodationDto.getReputation() != null) {
+                accommodationDao.patchAccommodation(Integer.parseInt(id), accommodationDto, getReputationBadge(accommodationDto.getReputation()));
+            } else {
+                accommodationDao.patchAccommodation(Integer.parseInt(id), accommodationDto, null);
+            }
+
+        } catch (Exception e) {
+            throw new AccommodationServiceException("Failed patching accommodation by id", e);
         }
     }
 

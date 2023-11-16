@@ -21,6 +21,7 @@ public class AccommodationRowMapper implements RowMapper<AccommodationDto> {
         accommodationRow.setCategory(rs.getString("category"));
         accommodationRow.setCity(rs.getString("city"));
         accommodationRow.setState(rs.getString("state"));
+        accommodationRow.setCountry(rs.getString("country"));
         accommodationRow.setZipCode(rs.getString("zip_code"));
         accommodationRow.setAddress(rs.getString("address"));
         accommodationRow.setImage(rs.getString("image"));

@@ -166,8 +166,7 @@ paths:
         content:
           'application/json':
             schema:
-              type: object
-              properties: {}
+              $ref: '#/components/schemas/AccommodationPatchBody'
         required: true
       responses:
         204:
@@ -317,6 +316,65 @@ components:
         - city
         - country
         - zip_code
+
+    AccommodationPatchBody:
+      title: Accommodation Patch Body
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 10
+          description: Name of the accommodation. Following words are not accepted ["Free", "Offer", "Book", "Website"]
+        rating:
+          type: integer
+          minimum: 0
+          maximum: 5
+          description: Rating of the accommodation.
+        category:
+          type: string
+          enum:
+            - hotel
+            - alternative
+            - hostel
+            - lodge
+            - resort
+            - guest-house
+          description: Type of the accommodation
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+              description: City of the accommodation
+            state:
+              type: string
+              description: State of the accommodation
+            country:
+              type: string
+              description: Country of the accommodation
+            zip_code:
+              type: string
+              minLength: 5
+              maxLength: 5
+              description: Zip code of the accommodation
+            address:
+              type: string
+              description: Address of the accommodation
+        image:
+          type: string
+          pattern: '[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
+          description: URL of the image
+        reputation:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          description: Reputation of the accommodation
+        price:
+          type: integer
+          description: Price of the accommodation
+        availability:
+          type: integer
+          description: Available number of accommodation units
 
     Booking:
       title: Booking
