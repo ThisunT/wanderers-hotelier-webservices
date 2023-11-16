@@ -17,7 +17,7 @@ public class AccommodationDto {
     private String city;
     private String state;
     private String country;
-    private int zipCode;
+    private String zipCode;
     private String address;
     private String image;
     private int reputation;

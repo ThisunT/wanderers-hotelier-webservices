@@ -30,7 +30,6 @@ public class AccommodationService {
         } catch (Exception e) {
             throw new AccommodationServiceException("Failed creating the accommodation", e);
         }
-
     }
 
     private ReputationBadgeEnum getReputationBadge(int reputation) {

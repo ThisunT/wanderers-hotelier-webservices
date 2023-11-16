@@ -16,5 +16,5 @@ public class QueryConstants {
                 ") " +
             "SELECT id FROM acc";
 
-
+    public static final String EXISTS_HOTELIER = "SELECT EXISTS (SELECT 1 FROM hotelier WHERE id = :id)";
 }

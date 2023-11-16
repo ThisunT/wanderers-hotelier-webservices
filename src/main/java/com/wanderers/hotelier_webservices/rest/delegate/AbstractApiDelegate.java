@@ -1,4 +1,4 @@
-package com.wanderers.hotelier_webservices.rest;
+package com.wanderers.hotelier_webservices.rest.delegate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,7 @@ public abstract class AbstractApiDelegate {
     }
 
     protected HttpServletRequest getServletRequest() {
-        return Optional.ofNullable(servletRequest).orElseThrow(() -> new IllegalStateException("request is required"));
+        return Optional.ofNullable(servletRequest).orElseThrow(() -> new IllegalStateException("request object is required"));
     }
 
 }
