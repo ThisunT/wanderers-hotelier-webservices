@@ -1,8 +1,8 @@
 package com.wanderers.hotelier_webservices.rest.validate;
 
-import com.wanderers.hotelier_webservices.rest.exception.InvalidHotelierException;
+import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierException;
 import com.wanderers.hotelier_webservices.rest.exception.InvalidPayloadException;
-import com.wanderers.hotelier_webservices.rest.exception.HotelierIdException;
+import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
@@ -37,8 +37,8 @@ public class AccommodationValidator {
 
     public void validateAccommodationPatch(String accommodationId, AccommodationPatchBody accommodationPatchBody, String hotelierId) {
         validateHotelier(hotelierId, accommodationId);
-        Optional.of(accommodationPatchBody.getName()).ifPresent(this::validateName);
-        Optional.of(accommodationPatchBody.getLocation().getZipCode()).ifPresent(this::validateZipCode);
+        Optional.ofNullable(accommodationPatchBody.getName()).ifPresent(this::validateName);
+        Optional.ofNullable(accommodationPatchBody.getLocation()).flatMap(val -> Optional.ofNullable(val.getZipCode())).ifPresent(this::validateZipCode);
     }
 
     public void validateHotelier(String hotelierId, String accommodationId) {
@@ -50,13 +50,13 @@ public class AccommodationValidator {
         String hotelierOfAccommodation = accommodationDao.getHotelierById(Integer.parseInt(id));
 
         if(!hotelierOfAccommodation.equals(hotelierId)) {
-            throw new InvalidHotelierException(hotelierId + " is not authorized to alter the record");
+            throw new UnauthorizedHotelierException(hotelierId + " is not authorized to alter the record");
         }
     }
 
     private void validateHotelierId(String hotelierId) {
         if (Boolean.FALSE.equals(hotelierDao.isExistingHotelier(hotelierId))) {
-            throw new HotelierIdException(hotelierId + " does not exists in the system. Please register!");
+            throw new ResourceNotFoundException(hotelierId + " does not exists in the system. Please register!");
         }
     }
 

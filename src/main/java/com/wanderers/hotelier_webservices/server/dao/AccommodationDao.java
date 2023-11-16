@@ -146,6 +146,31 @@ public class AccommodationDao {
         }
     }
 
+    public Integer getAvailabilityByAccommodation(int id) throws AccommodationDaoException, ResultNotFoundException {
+        try {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("id", id);
+
+            return namedParameterJdbcTemplate.queryForObject(GET_AVAILABILITY_BY_ACC_ID, params, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResultNotFoundException("An accommodation resource does not exist for id: " + id, e);
+        } catch (Exception e) {
+            throw new AccommodationDaoException("Failed to get hotelier by accommodation id", e);
+        }
+    }
+
+    public void setAvailabilityByAccommodation(int id, int newAvailability) throws AccommodationDaoException {
+        try {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("id", id);
+            params.addValue("newAvailability", newAvailability);
+
+            namedParameterJdbcTemplate.update(UPDATE_AVAILABILITY, params);
+        } catch (Exception e) {
+            throw new AccommodationDaoException("Failed to get hotelier by accommodation id", e);
+        }
+    }
+
     private String buildAccQueryForPatch(MapSqlParameterSource accParams, int id, AccommodationPatchBody patchDTO, ReputationBadgeEnum reputationBadgeEnum) {
         StringBuilder accQueryBuilder = new StringBuilder();
         final String initUpdateAccQuery = "UPDATE accommodation SET ";
@@ -172,16 +197,16 @@ public class AccommodationDao {
                     return " reputation = :reputation,";
                 }).orElse(""))
                 .append(Optional.ofNullable(reputationBadgeEnum).map(val -> {
-                    accParams.addValue("reputationBadge", val);
+                    accParams.addValue("reputationBadge", val.getValue().toUpperCase());
                     return " reputation_badge = :reputationBadge::reputation_badge_enum,";
                 }).orElse(""))
                 .append(Optional.ofNullable(patchDTO.getPrice()).map(val -> {
                     accParams.addValue("price", val);
-                    return " price :price,";
+                    return " price = :price,";
                 }).orElse(""))
                 .append(Optional.ofNullable(patchDTO.getAvailability()).map(val -> {
                     accParams.addValue("availability", val);
-                    return " availability :availability,";
+                    return " availability = :availability,";
                 }).orElse(""));
 
         if (initUpdateAccQuery.equals(accQueryBuilder.toString())) {

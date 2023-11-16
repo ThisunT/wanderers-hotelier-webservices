@@ -1,6 +1,6 @@
 package com.wanderers.hotelier_webservices.rest.exception;
 
-public class InvalidHotelierException extends RuntimeException {
+public class ExpiredTokenException extends RESTException {
 
     private static final long serialVersionUID = 1L;
 
@@ -9,7 +9,7 @@ public class InvalidHotelierException extends RuntimeException {
      *
      * @param message String value of Exception
      */
-    public InvalidHotelierException(String message) {
+    public ExpiredTokenException(String message) {
         super(message);
     }
 }

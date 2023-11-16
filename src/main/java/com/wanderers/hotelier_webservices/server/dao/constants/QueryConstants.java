@@ -24,4 +24,12 @@ public class QueryConstants {
 
     public static final String DELETE_ACCOMMODATION_BY_ID = "DELETE FROM accommodation where id = :id";
 
+    public static final String EXISTS_CUSTOMER = "SELECT EXISTS (SELECT 1 FROM customer WHERE id = :id)";
+
+    public static final String GET_AVAILABILITY_BY_ACC_ID = "SELECT availability FROM accommodation where id = :id";
+
+    public static final String INSERT_BOOKING = "INSERT INTO booking (customer_id, accommodation_id) VALUES (:customerId, :accommodationId)";
+
+    public static final String UPDATE_AVAILABILITY = "UPDATE accommodation SET availability = :newAvailability where id = :id";
+
 }

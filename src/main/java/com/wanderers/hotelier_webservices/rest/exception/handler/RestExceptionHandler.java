@@ -1,7 +1,9 @@
 package com.wanderers.hotelier_webservices.rest.exception.handler;
 
-import com.wanderers.hotelier_webservices.rest.exception.HotelierIdException;
+import com.wanderers.hotelier_webservices.rest.exception.ExpiredTokenException;
+import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.exception.RESTException;
+import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierException;
 import com.wanderers.hotelier_webservices.rest.model.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Optional;
 
 @ControllerAdvice
-public class BadRequestHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     public ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
@@ -89,13 +91,33 @@ public class BadRequestHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(HotelierIdException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ResponseEntity<Object> handleHotelierIdException(HotelierIdException ex) {
+    public ResponseEntity<Object> handleHotelierIdException(ResourceNotFoundException ex) {
         var response = new ExceptionResponse()
                 .error(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .message(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnauthorizedHotelierException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedHotelier(UnauthorizedHotelierException ex) {
+        var response = new ExceptionResponse()
+                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .message(ex.getLocalizedMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ResponseEntity<ExceptionResponse> handleExpiredToken(ExpiredTokenException ex) {
+        var response = new ExceptionResponse()
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .message(ex.getLocalizedMessage());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

@@ -6,11 +6,9 @@ import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException;
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

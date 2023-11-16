@@ -2,7 +2,7 @@ package com.wanderers.hotelier_webservices.rest.delegate;
 
 import com.wanderers.hotelier_webservices.mapper.AccommodationMapper;
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate;
-import com.wanderers.hotelier_webservices.rest.exception.HotelierIdException;
+import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
@@ -93,6 +93,6 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
 
     private String getHotelierId() {
         return Optional.ofNullable(getServletRequest().getHeader("Hotelier-Id"))
-                .orElseThrow(() -> new HotelierIdException("Hotelier-Id header cannot be null"));
+                .orElseThrow(() -> new ResourceNotFoundException("Hotelier-Id header cannot be null"));
     }
 }
