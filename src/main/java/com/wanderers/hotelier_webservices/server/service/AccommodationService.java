@@ -75,6 +75,15 @@ public class AccommodationService {
         }
     }
 
+    @SneakyThrows
+    public void deleteAccommodation(String id) {
+        try {
+            accommodationDao.deleteAccommodation(Integer.parseInt(id));
+        } catch (Exception e) {
+            throw new AccommodationServiceException("Failed deleting accommodation by id", e);
+        }
+    }
+
     private ReputationBadgeEnum getReputationBadge(int reputation) {
         if (reputation <= 500) {
             return ReputationBadgeEnum.red;

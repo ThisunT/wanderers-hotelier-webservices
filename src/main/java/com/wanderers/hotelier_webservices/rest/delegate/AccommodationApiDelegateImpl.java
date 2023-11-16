@@ -2,7 +2,7 @@ package com.wanderers.hotelier_webservices.rest.delegate;
 
 import com.wanderers.hotelier_webservices.mapper.AccommodationMapper;
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate;
-import com.wanderers.hotelier_webservices.rest.exception.HotelierIdMissingException;
+import com.wanderers.hotelier_webservices.rest.exception.HotelierIdException;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
@@ -40,15 +40,11 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
 
     @Override
     public ResponseEntity<AccommodationResponseBody> createAccommodation(AccommodationRequestBody accommodationRequest) {
-
         var hotelierId = getHotelierId();
-
         validator.validateAccommodationReq(accommodationRequest, hotelierId);
 
         AccommodationDto accommodationReqDto = accommodationMapper.mapToDto(accommodationRequest, hotelierId);
-
         AccommodationDto accommodationResDto = accommodationService.create(accommodationReqDto);
-
         AccommodationResponseBody accommodationResponse = accommodationMapper.mapToRestAccommodation(accommodationResDto);
 
         return new ResponseEntity<>(accommodationResponse, HttpStatus.CREATED);
@@ -61,7 +57,6 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
                                                                              ReputationBadgeEnum reputationBadge) {
 
         List<AccommodationDto> accommodationDTOs = accommodationService.getAccommodations(hotelierId, rating, city, reputationBadge);
-
         List<AccommodationResponseBody> accommodationsResponse = accommodationMapper.mapToRestAccommodations(accommodationDTOs);
 
         return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
@@ -71,7 +66,6 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
     public ResponseEntity<AccommodationResponseBody> getAccommodationById(String id) {
 
         AccommodationDto accommodationDto = accommodationService.getAccommodation(id);
-
         AccommodationResponseBody accommodationsResponse = accommodationMapper.mapToRestAccommodation(accommodationDto);
 
         return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
@@ -80,7 +74,6 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
     @Override
     public ResponseEntity<Void> updateAccommodationById(String id, AccommodationPatchBody body) {
         var hotelierId = getHotelierId();
-
         validator.validateAccommodationPatch(id, body, hotelierId);
 
         accommodationService.patchAccommodation(id, body);
@@ -88,8 +81,18 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<Void> deleteAccommodationById(String id) {
+        var hotelierId = getHotelierId();
+        validator.validateHotelier(hotelierId, id);
+
+        accommodationService.deleteAccommodation(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     private String getHotelierId() {
         return Optional.ofNullable(getServletRequest().getHeader("Hotelier-Id"))
-                .orElseThrow(() -> new HotelierIdMissingException("Hotelier-Id cannot be null"));
+                .orElseThrow(() -> new HotelierIdException("Hotelier-Id header cannot be null"));
     }
 }

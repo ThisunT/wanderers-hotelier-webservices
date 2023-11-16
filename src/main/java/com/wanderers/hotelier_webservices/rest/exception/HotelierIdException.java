@@ -1,6 +1,6 @@
 package com.wanderers.hotelier_webservices.rest.exception;
 
-public class HotelierIdMissingException extends RESTException {
+public class HotelierIdException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -9,7 +9,7 @@ public class HotelierIdMissingException extends RESTException {
      *
      * @param message String value of Exception
      */
-    public HotelierIdMissingException(String message) {
+    public HotelierIdException(String message) {
         super(message);
     }
 }

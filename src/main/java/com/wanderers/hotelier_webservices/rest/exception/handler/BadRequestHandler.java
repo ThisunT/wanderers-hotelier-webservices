@@ -1,5 +1,6 @@
 package com.wanderers.hotelier_webservices.rest.exception.handler;
 
+import com.wanderers.hotelier_webservices.rest.exception.HotelierIdException;
 import com.wanderers.hotelier_webservices.rest.exception.RESTException;
 import com.wanderers.hotelier_webservices.rest.model.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
@@ -86,5 +87,15 @@ public class BadRequestHandler extends ResponseEntityExceptionHandler {
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HotelierIdException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ResponseEntity<Object> handleHotelierIdException(HotelierIdException ex) {
+        var response = new ExceptionResponse()
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

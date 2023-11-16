@@ -2,6 +2,7 @@ package com.wanderers.hotelier_webservices.rest.validate;
 
 import com.wanderers.hotelier_webservices.rest.exception.InvalidHotelierException;
 import com.wanderers.hotelier_webservices.rest.exception.InvalidPayloadException;
+import com.wanderers.hotelier_webservices.rest.exception.HotelierIdException;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
@@ -29,29 +30,33 @@ public class AccommodationValidator {
     }
 
     public void validateAccommodationReq(AccommodationRequestBody accommodationReqBody, String hotelierId) {
+        validateHotelierId(hotelierId);
         validateName(accommodationReqBody.getName());
         validateZipCode(accommodationReqBody.getLocation().getZipCode());
-        validateHotelierId(hotelierId);
     }
 
-    public void validateAccommodationPatch(String id, AccommodationPatchBody accommodationPatchBody, String hotelierId) {
-        validateHotelierId(hotelierId);
-        validateHotelierAuthority(id, hotelierId);
+    public void validateAccommodationPatch(String accommodationId, AccommodationPatchBody accommodationPatchBody, String hotelierId) {
+        validateHotelier(hotelierId, accommodationId);
         Optional.of(accommodationPatchBody.getName()).ifPresent(this::validateName);
         Optional.of(accommodationPatchBody.getLocation().getZipCode()).ifPresent(this::validateZipCode);
     }
 
-    public void validateHotelierAuthority(String id, String hotelierId) {
+    public void validateHotelier(String hotelierId, String accommodationId) {
+        validateHotelierId(hotelierId);
+        validateHotelierAuthority(accommodationId, hotelierId);
+    }
+
+    private void validateHotelierAuthority(String id, String hotelierId) {
         String hotelierOfAccommodation = accommodationDao.getHotelierById(Integer.parseInt(id));
 
         if(!hotelierOfAccommodation.equals(hotelierId)) {
-            throw new InvalidHotelierException(hotelierId + " is not authorized to edit the record");
+            throw new InvalidHotelierException(hotelierId + " is not authorized to alter the record");
         }
     }
 
-    public void validateHotelierId(String hotelierId) {
+    private void validateHotelierId(String hotelierId) {
         if (Boolean.FALSE.equals(hotelierDao.isExistingHotelier(hotelierId))) {
-            throw new InvalidHotelierException(hotelierId + " does not exists in the system. Please register");
+            throw new HotelierIdException(hotelierId + " does not exists in the system. Please register!");
         }
     }
 

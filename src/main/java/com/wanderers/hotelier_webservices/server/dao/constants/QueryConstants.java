@@ -21,4 +21,7 @@ public class QueryConstants {
     public static final String GET_ACCOMMODATION_BY_ID = "SELECT * FROM accommodation acc INNER JOIN location loc ON acc.id = loc.accommodation_id where acc.id = :id";
 
     public static final String GET_HOTELIER_BY_ACC_ID = "SELECT hotelier_id FROM accommodation where id = :id";
+
+    public static final String DELETE_ACCOMMODATION_BY_ID = "DELETE FROM accommodation where id = :id";
+
 }

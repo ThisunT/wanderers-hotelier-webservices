@@ -108,6 +108,8 @@ public class AccommodationDao {
             params.addValue("id", id);
 
             return namedParameterJdbcTemplate.queryForObject(GET_HOTELIER_BY_ACC_ID, params, String.class);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResultNotFoundException("An accommodation resource does not exist for id: " + id, e);
         } catch (Exception e) {
             throw new AccommodationDaoException("Failed to get hotelier by accommodation id", e);
         }
@@ -130,6 +132,17 @@ public class AccommodationDao {
             }
         } catch (Exception e) {
             throw new AccommodationDaoException("Failed to patch accommodation by id", e);
+        }
+    }
+
+    public void deleteAccommodation(int id) throws AccommodationDaoException {
+        try {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("id", id);
+
+            namedParameterJdbcTemplate.update(DELETE_ACCOMMODATION_BY_ID, params);
+        } catch (Exception e) {
+            throw new AccommodationDaoException("Failed to delete accommodation by id", e);
         }
     }
 
