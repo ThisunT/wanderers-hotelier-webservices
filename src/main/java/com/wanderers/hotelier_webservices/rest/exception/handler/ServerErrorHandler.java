@@ -1,6 +1,7 @@
 package com.wanderers.hotelier_webservices.rest.exception.handler;
 
 import com.wanderers.hotelier_webservices.rest.model.ExceptionResponse;
+import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
 import com.wanderers.hotelier_webservices.server.exception.ServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,5 +19,13 @@ public class ServerErrorHandler {
     public ResponseEntity<ExceptionResponse> handleServerException(ServerException ex) {
         var response = new ExceptionResponse().error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()).message(ex.getLocalizedMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ResultNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ResponseEntity<ExceptionResponse> handleServerNotFoundException(ResultNotFoundException ex) {
+        var response = new ExceptionResponse().error(HttpStatus.NOT_FOUND.getReasonPhrase()).message(ex.getLocalizedMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

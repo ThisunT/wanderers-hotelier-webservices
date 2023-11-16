@@ -4,7 +4,9 @@ import com.wanderers.hotelier_webservices.mapper.AccommodationRowMapper;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException;
+import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.GET_ACCOMMODATION_BY_ID;
 import static com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.INSERT_ACCOMMODATION;
 
 /**
@@ -75,5 +78,18 @@ public class AccommodationDao {
             throw new AccommodationDaoException("Failed to get accommodation records by criteria", e);
         }
 
+    }
+
+    public AccommodationDto getAccommodation(int id) throws AccommodationDaoException, ResultNotFoundException {
+        try {
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("id", id);
+
+            return namedParameterJdbcTemplate.queryForObject(GET_ACCOMMODATION_BY_ID, params, new AccommodationRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResultNotFoundException("An accommodation resource does not exist for id: " + id, e);
+        } catch (Exception e) {
+            throw new AccommodationDaoException("Failed to get accommodation records by id", e);
+        }
     }
 }

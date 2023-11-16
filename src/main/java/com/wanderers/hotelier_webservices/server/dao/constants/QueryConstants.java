@@ -17,4 +17,6 @@ public class QueryConstants {
             "SELECT id FROM acc";
 
     public static final String EXISTS_HOTELIER = "SELECT EXISTS (SELECT 1 FROM hotelier WHERE id = :id)";
+
+    public static final String GET_ACCOMMODATION_BY_ID = "SELECT * FROM accommodation acc INNER JOIN location loc ON acc.id = loc.accommodation_id where acc.id = :id";
 }

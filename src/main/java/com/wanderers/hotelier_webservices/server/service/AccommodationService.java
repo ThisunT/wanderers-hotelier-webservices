@@ -4,6 +4,8 @@ import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException;
+import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,17 @@ public class AccommodationService {
             return accommodationDao.getAccommodations(hotelierId, rating, city, reputationBadge);
         } catch (Exception e) {
             throw new AccommodationServiceException("Failed getting the accommodations", e);
+        }
+    }
+
+    @SneakyThrows
+    public AccommodationDto getAccommodation(String id) {
+        try {
+            return accommodationDao.getAccommodation(Integer.parseInt(id));
+        } catch (ResultNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AccommodationServiceException("Failed getting accommodation by id", e);
         }
     }
 

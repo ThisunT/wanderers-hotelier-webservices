@@ -66,6 +66,16 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
         return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<AccommodationResponseBody> getAccommodationById(String id) {
+
+        AccommodationDto accommodationDto = accommodationService.getAccommodation(id);
+
+        AccommodationResponseBody accommodationsResponse = accommodationMapper.mapToRestAccommodation(accommodationDto);
+
+        return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
+    }
+
     private String getHotelierId() {
         return Optional.ofNullable(getServletRequest().getHeader("Hotelier-Id"))
                 .orElseThrow(() -> new HotelierIdMissingException("Hotelier-Id cannot be null"));
