@@ -6,6 +6,9 @@ import com.wanderers.hotelier_webservices.rest.model.Location;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Class is responsible for mapping {@link AccommodationDto} DTO between REST and Server layers
  */
@@ -32,7 +35,7 @@ public class AccommodationMapper {
         return accommodationDto;
     }
 
-    public AccommodationResponseBody mapToResponse(AccommodationDto accommodationDto) {
+    public AccommodationResponseBody mapToRestAccommodation(AccommodationDto accommodationDto) {
         final AccommodationResponseBody accommodationRes = new AccommodationResponseBody();
         final Location location = new Location();
 
@@ -56,5 +59,9 @@ public class AccommodationMapper {
         accommodationRes.setName(accommodationDto.getName());
 
         return accommodationRes;
+    }
+
+    public List<AccommodationResponseBody> mapToRestAccommodations(List<AccommodationDto> accommodationDTOs) {
+        return accommodationDTOs.stream().map(this::mapToRestAccommodation).collect(Collectors.toList());
     }
 }

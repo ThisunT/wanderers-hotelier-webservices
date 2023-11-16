@@ -3,9 +3,9 @@ package com.wanderers.hotelier_webservices.rest.delegate;
 import com.wanderers.hotelier_webservices.mapper.AccommodationMapper;
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate;
 import com.wanderers.hotelier_webservices.rest.exception.HotelierIdMissingException;
-import com.wanderers.hotelier_webservices.rest.exception.RESTException;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
+import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.rest.validate.AccommodationValidator;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.service.AccommodationService;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -47,9 +48,22 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
 
         AccommodationDto accommodationResDto = accommodationService.create(accommodationReqDto);
 
-        AccommodationResponseBody accommodationResponse = accommodationMapper.mapToResponse(accommodationResDto);
+        AccommodationResponseBody accommodationResponse = accommodationMapper.mapToRestAccommodation(accommodationResDto);
 
         return new ResponseEntity<>(accommodationResponse, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<List<AccommodationResponseBody>> getAccommodations(String hotelierId,
+                                                                             Integer rating,
+                                                                             String city,
+                                                                             ReputationBadgeEnum reputationBadge) {
+
+        List<AccommodationDto> accommodationDTOs = accommodationService.getAccommodations(hotelierId, rating, city, reputationBadge);
+
+        List<AccommodationResponseBody> accommodationsResponse = accommodationMapper.mapToRestAccommodations(accommodationDTOs);
+
+        return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
     }
 
     private String getHotelierId() {

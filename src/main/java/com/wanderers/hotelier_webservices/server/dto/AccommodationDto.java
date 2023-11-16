@@ -1,6 +1,6 @@
 package com.wanderers.hotelier_webservices.server.dto;
 
-import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody.ReputationBadgeEnum;
+import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
