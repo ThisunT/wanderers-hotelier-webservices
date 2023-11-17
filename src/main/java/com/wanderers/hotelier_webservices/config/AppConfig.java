@@ -2,7 +2,6 @@ package com.wanderers.hotelier_webservices.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,7 +20,7 @@ public class AppConfig {
         props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource");
         props.setProperty("dataSource.user", "postgres");
         props.setProperty("dataSource.password", "pass");
-        props.setProperty("dataSource.url", "jdbc:postgresql://localhost:5432/wanderers");
+        props.setProperty("dataSource.url", "jdbc:postgresql://db:5432/postgres");
 
         HikariConfig config = new HikariConfig(props);
         config.setMaximumPoolSize(3);
@@ -31,6 +30,7 @@ public class AppConfig {
         config.setConnectionInitSql("SELECT 1");
         config.setIdleTimeout(300000);
         config.setLeakDetectionThreshold(900000);
+
         return new HikariDataSource(config);
     }
 

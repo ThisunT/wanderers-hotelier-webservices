@@ -1,0 +1,17 @@
+version: '3'
+services:
+  wanderers-webservices:
+    build: .
+    restart: unless-stopped
+    container_name: hotelier-webservices
+    ports:
+      - 8080:8080
+    networks:
+      - db_app-network
+
+networks:
+  db_app-network:
+    external: true
+
+
+
