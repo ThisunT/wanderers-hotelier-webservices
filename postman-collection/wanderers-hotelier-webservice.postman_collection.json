@@ -1,0 +1,193 @@
+{
+	"info": {
+		"_postman_id": "42a0f931-e1b4-422c-9d4c-3df965e421ce",
+		"name": "wanderers-hotelier-webservice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19386528"
+	},
+	"item": [
+		{
+			"name": "create acc",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Hotelier-Id",
+						"value": "CRFC",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"new hotel by thejana\",\r\n  \"rating\": 4,\r\n   \"category\": \"hotel\",\r\n  \"location\": {\r\n    \"city\": \"Kaluthara\",\r\n    \"state\": \"Eastern\",\r\n    \"country\": \"Sri Lanka\",\r\n    \"zip_code\": \"13455\",\r\n    \"address\": \"Ananda Kumaraswami Road\"\r\n  },\r\n  \"image\": \"thejana.com\",\r\n  \"reputation\": 99,\r\n  \"price\": 100,\r\n  \"availability\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/accommodations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accommodations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get by criteria",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/accommodations?hotelier_id=CRFC",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accommodations"
+					],
+					"query": [
+						{
+							"key": "hotelier_id",
+							"value": "CRFC"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/accommodations/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accommodations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch acc by id",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Hotelier-Id",
+						"value": "CRFC",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"reputation\": 800,\r\n   \"location\": {\r\n    \"city\": \"Kelaniya\",\r\n    \"zip_code\": \"12345\"\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/accommodations/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accommodations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete by id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Hotelier-Id",
+						"value": "CRFC",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/accommodations/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"accommodations",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "booking",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Is-Valid-Token",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accommodation_id\": 1,\r\n    \"customer_id\": 1\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/bookings",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
