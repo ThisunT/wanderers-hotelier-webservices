@@ -1,6 +1,6 @@
 package com.wanderers.hotelier_webservices.server.exception;
 
-public class ServerException extends Exception {
+public class ServerException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

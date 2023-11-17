@@ -2,6 +2,7 @@ package com.wanderers.hotelier_webservices.server.service;
 
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
+import com.wanderers.hotelier_webservices.server.AccommodationCache;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException;
@@ -19,10 +20,12 @@ import java.util.List;
 public class AccommodationService {
 
     private final AccommodationDao accommodationDao;
+    private final AccommodationCache accommodationCache;
 
     @Autowired
-    AccommodationService(AccommodationDao accommodationDao) {
+    AccommodationService(AccommodationDao accommodationDao, AccommodationCache accommodationCache) {
         this.accommodationDao = accommodationDao;
+        this.accommodationCache = accommodationCache;
     }
 
     @SneakyThrows
@@ -42,7 +45,7 @@ public class AccommodationService {
                                                     String city,
                                                     ReputationBadgeEnum reputationBadge) {
         try {
-            return accommodationDao.getAccommodations(hotelierId, rating, city, reputationBadge);
+            return accommodationCache.getAccommodations(hotelierId, rating, city, reputationBadge);
         } catch (Exception e) {
             throw new AccommodationServiceException("Failed getting the accommodations", e);
         }
@@ -51,7 +54,7 @@ public class AccommodationService {
     @SneakyThrows
     public AccommodationDto getAccommodation(String id) {
         try {
-            return accommodationDao.getAccommodation(Integer.parseInt(id));
+            return accommodationCache.getAccommodation(Integer.parseInt(id));
         } catch (ResultNotFoundException e) {
             throw e;
         } catch (Exception e) {
