@@ -8,6 +8,7 @@ import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException;
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -23,6 +24,7 @@ import static com.wanderers.hotelier_webservices.server.dao.constants.QueryConst
 /**
  * Class is responsible for datasource manipulations of accommodation
  */
+@Log4j2
 @Repository("accommodation_dao")
 public class AccommodationDao {
 
@@ -34,6 +36,7 @@ public class AccommodationDao {
     }
 
     public AccommodationDto create(AccommodationDto accommodationDto) throws AccommodationDaoException {
+        log.info("Creating an accommodation for: {}", accommodationDto.getHotelierId());
         try {
             MapSqlParameterSource params = new MapSqlParameterSource()
                     .addValue("name", accommodationDto.getName())
@@ -57,12 +60,14 @@ public class AccommodationDao {
 
             return accommodationDto;
         } catch (Exception e) {
+            log.error("An error occurred while creating an accommodation for: {}", accommodationDto.getHotelierId(), e);
             throw new AccommodationDaoException("Failed to create the accommodation record", e);
         }
     }
 
     public List<AccommodationDto> getAccommodations(String hotelierId, Integer rating,
                                                     String city, ReputationBadgeEnum reputationBadge) throws AccommodationDaoException {
+        log.info("Fetching accommodations for: {}", hotelierId);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("hotelierId", hotelierId);
@@ -83,12 +88,14 @@ public class AccommodationDao {
 
             return namedParameterJdbcTemplate.query(query, params, new AccommodationRowMapper());
         } catch (Exception e) {
+            log.error("An error occurred while fetching an accommodations", e);
             throw new AccommodationDaoException("Failed to get accommodation records by criteria", e);
         }
 
     }
 
     public AccommodationDto getAccommodation(int id) throws AccommodationDaoException, ResultNotFoundException {
+        log.info("Fetching accommodations of Id: {}", id);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("id", id);
@@ -97,12 +104,14 @@ public class AccommodationDao {
         } catch (EmptyResultDataAccessException e) {
             throw new ResultNotFoundException("An accommodation resource does not exist for id: " + id, e);
         } catch (Exception e) {
+            log.error("An error occurred while fetching an accommodations by id", e);
             throw new AccommodationDaoException("Failed to get accommodation records by id", e);
         }
     }
 
     @SneakyThrows
     public String getHotelierById(int id) {
+        log.info("Fetching hotelier of Id: {}", id);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("id", id);
@@ -111,12 +120,14 @@ public class AccommodationDao {
         } catch (EmptyResultDataAccessException e) {
             throw new ResultNotFoundException("An accommodation resource does not exist for id: " + id, e);
         } catch (Exception e) {
+            log.error("An error occurred while fetching an accommodations by id", e);
             throw new AccommodationDaoException("Failed to get hotelier by accommodation id", e);
         }
     }
 
     @Transactional
     public void patchAccommodation(int id, AccommodationPatchBody patchDTO, ReputationBadgeEnum reputationBadgeEnum) throws AccommodationDaoException {
+        log.info("Patching accommodation of Id: {}", id);
         try {
             MapSqlParameterSource accParams = new MapSqlParameterSource();
             MapSqlParameterSource locParams = new MapSqlParameterSource();
@@ -131,22 +142,26 @@ public class AccommodationDao {
                 namedParameterJdbcTemplate.update(locQuery, locParams);
             }
         } catch (Exception e) {
+            log.error("An error occurred while patching accommodation {}", id,  e);
             throw new AccommodationDaoException("Failed to patch accommodation by id", e);
         }
     }
 
     public void deleteAccommodation(int id) throws AccommodationDaoException {
+        log.info("Deleting accommodation of Id: {}", id);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("id", id);
 
             namedParameterJdbcTemplate.update(DELETE_ACCOMMODATION_BY_ID, params);
         } catch (Exception e) {
+            log.error("An error occurred while deleting accommodation {}", id,  e);
             throw new AccommodationDaoException("Failed to delete accommodation by id", e);
         }
     }
 
     public Integer getAvailabilityByAccommodation(int id) throws AccommodationDaoException, ResultNotFoundException {
+        log.info("Fetching availability of Id: {}", id);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("id", id);
@@ -155,11 +170,13 @@ public class AccommodationDao {
         } catch (EmptyResultDataAccessException e) {
             throw new ResultNotFoundException("An accommodation resource does not exist for id: " + id, e);
         } catch (Exception e) {
+            log.error("An error occurred while getting availability of accommodation {}", id,  e);
             throw new AccommodationDaoException("Failed to get hotelier by accommodation id", e);
         }
     }
 
     public void setAvailabilityByAccommodation(int id, int newAvailability) throws AccommodationDaoException {
+        log.info("Setting availability of accommodation Id: {}", id);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
             params.addValue("id", id);
@@ -167,6 +184,7 @@ public class AccommodationDao {
 
             namedParameterJdbcTemplate.update(UPDATE_AVAILABILITY, params);
         } catch (Exception e) {
+            log.error("An error occurred while setting availability of accommodation {}", id,  e);
             throw new AccommodationDaoException("Failed to get hotelier by accommodation id", e);
         }
     }

@@ -3,6 +3,7 @@ package com.wanderers.hotelier_webservices.server.dao;
 import com.wanderers.hotelier_webservices.rest.model.Booking;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException;
 import com.wanderers.hotelier_webservices.server.exception.BookingDaoException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,6 +14,7 @@ import static com.wanderers.hotelier_webservices.server.dao.constants.QueryConst
 /**
  * Class is responsible for datasource manipulations of booking
  */
+@Log4j2
 @Repository("booking_dao")
 public class BookingDao {
 
@@ -33,6 +35,7 @@ public class BookingDao {
 
             return booking;
         } catch (Exception e) {
+            log.error("An error occurred while creating the booking", e);
             throw new BookingDaoException("Failed to create the booking record", e);
         }
     }

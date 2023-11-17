@@ -2,6 +2,7 @@ package com.wanderers.hotelier_webservices.server.dao;
 
 import com.wanderers.hotelier_webservices.server.exception.HotelierDaoException;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -12,6 +13,7 @@ import static com.wanderers.hotelier_webservices.server.dao.constants.QueryConst
 /**
  * Class is responsible for datasource manipulations of hotelier
  */
+@Log4j2
 @Repository("hotelier_dao")
 public class HotelierDao {
 
@@ -30,6 +32,7 @@ public class HotelierDao {
 
             return namedParameterJdbcTemplate.queryForObject(EXISTS_HOTELIER, params, Boolean.class);
         } catch (Exception e) {
+            log.error("An error occurred while fetching hotelier", e);
             throw new HotelierDaoException("Failed to get the hotelier record", e);
         }
     }
