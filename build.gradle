@@ -1,8 +1,13 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.16'
-	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.springframework.boot' version '2.7.17'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'org.jetbrains.kotlin.jvm' version '1.6.21'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.6.21'
 	id 'org.openapi.generator' version '7.1.0'
+	id 'org.jetbrains.kotlin.plugin.lombok' version '1.9.20'
+	id 'io.freefair.lombok' version '8.1.0'
 }
 
 group = 'com.wanderers'
@@ -24,7 +29,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	implementation 'org.projectlombok:lombok:1.18.26'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+//	implementation 'org.projectlombok:lombok:1.18.26'
 
 	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.8'
 	implementation group: 'io.swagger.core.v3', name: 'swagger-models', version: '2.2.8'
@@ -36,7 +42,7 @@ dependencies {
 }
 
 openApiGenerate {
-	generatorName = "spring"
+	generatorName = "kotlin-spring"
 	validateSpec = true
 	inputSpec = "$projectDir/src/main/resources/static/hotelier-webservices-v1.yaml"
 	outputDir = "$buildDir/generated/openapi"
@@ -57,18 +63,18 @@ openApiGenerate {
 
 sourceSets {
 	main {
-		java {
-			srcDirs("$buildDir/generated/openapi/src/main/java")
+		kotlin {
+			srcDirs("$buildDir/generated/openapi/src/main/kotlin")
 		}
 	}
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(KotlinCompile) {
 	dependsOn(tasks.openApiGenerate)
 }
 
 task buildZip(type: Zip) {
-	from compileJava
+	from compileKotlin
 	from processResources
 	into('lib') {
 		from configurations.compileClasspath

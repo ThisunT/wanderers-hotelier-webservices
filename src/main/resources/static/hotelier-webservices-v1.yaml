@@ -386,6 +386,9 @@ components:
         customer_id:
           type: integer
           description: Identifier of the customer
+      required:
+        - accommodation_id
+        - customer_id
 
     ExceptionResponse:
       title: Exception Response
