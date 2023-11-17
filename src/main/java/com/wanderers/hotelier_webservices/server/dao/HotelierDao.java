@@ -30,7 +30,7 @@ public class HotelierDao {
 
             return namedParameterJdbcTemplate.queryForObject(EXISTS_HOTELIER, params, Boolean.class);
         } catch (Exception e) {
-            throw new HotelierDaoException("Failed get the hotelier record", e);
+            throw new HotelierDaoException("Failed to get the hotelier record", e);
         }
     }
 }
