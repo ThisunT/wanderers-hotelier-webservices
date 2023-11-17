@@ -1,7 +1,6 @@
 package com.wanderers.hotelier_webservices.rest.delegate;
 
 import com.wanderers.hotelier_webservices.rest.api.BookingApiDelegate;
-import com.wanderers.hotelier_webservices.rest.exception.ExpiredTokenException;
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.model.Booking;
 import com.wanderers.hotelier_webservices.rest.validate.BookingValidator;

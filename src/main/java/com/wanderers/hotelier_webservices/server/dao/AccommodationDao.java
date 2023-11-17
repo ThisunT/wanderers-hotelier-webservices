@@ -243,7 +243,7 @@ public class AccommodationDao {
                     }).orElse(""))
                     .append(Optional.ofNullable(location.getZipCode()).map(val -> {
                         locParams.addValue("zipCode", val);
-                        return " zipCode = :zipCode,";
+                        return " zip_code = :zipCode,";
                     }).orElse(""))
                     .append(Optional.ofNullable(location.getAddress()).map(val -> {
                         locParams.addValue("address", val);

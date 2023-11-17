@@ -1,4 +1,4 @@
-package com.wanderers.hotelier_webservices.server;
+package com.wanderers.hotelier_webservices.server.component;
 
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;

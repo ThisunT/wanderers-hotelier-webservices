@@ -2,7 +2,7 @@ package com.wanderers.hotelier_webservices.server.service;
 
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
-import com.wanderers.hotelier_webservices.server.AccommodationCache;
+import com.wanderers.hotelier_webservices.server.component.AccommodationCache;
 import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException;

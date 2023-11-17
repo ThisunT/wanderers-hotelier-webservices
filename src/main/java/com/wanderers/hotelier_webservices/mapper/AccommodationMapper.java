@@ -55,8 +55,6 @@ public class AccommodationMapper {
         accommodationRes.setReputationBadge(accommodationDto.getReputationBadge());
         accommodationRes.setPrice(accommodationDto.getPrice());
         accommodationRes.setAvailability(accommodationDto.getAvailability());
-        accommodationRes.setName(accommodationDto.getName());
-        accommodationRes.setName(accommodationDto.getName());
 
         return accommodationRes;
     }
