@@ -15,30 +15,33 @@ import java.util.concurrent.*;
 
 /**
  * Class is responsible for caching responses for fetch requests. Cache is focused on optimizing database calls.
+ * requestAccessTimeMap is used to store the request params and the time of access to evaluate for TTL.
+ * Once request params are cached, it is retained for 15 seconds. A background thread has been used to clear the
+ * request param and value mappings once the TTL get exceeded.
  */
 @Component("accommodation_cache")
 public class AccommodationCache {
 
     private static final int TTL_IN_SEC = 15;
 
-    private final ConcurrentMap<Integer, AccommodationDto> accommodationIdCache;
-    private final ConcurrentMap<String, List<AccommodationDto>> accommodationCriteriaCache;
-    private final ConcurrentMap<String, LocalTime> cacheAccessMap;
+    private final ConcurrentMap<Integer, AccommodationDto> accommodationIdValueMap;
+    private final ConcurrentMap<String, List<AccommodationDto>> accommodationCriteriaValueMap;
+    private final ConcurrentMap<String, LocalTime> requestAccessTimeMap;
     private final AccommodationDao accommodationDao;
 
     @Autowired
     AccommodationCache(AccommodationDao accommodationDao) {
-        this.accommodationIdCache = new ConcurrentHashMap<>();
-        this.accommodationCriteriaCache = new ConcurrentHashMap<>();
-        this.cacheAccessMap = new ConcurrentHashMap<>();
+        this.accommodationIdValueMap = new ConcurrentHashMap<>();
+        this.accommodationCriteriaValueMap = new ConcurrentHashMap<>();
+        this.requestAccessTimeMap = new ConcurrentHashMap<>();
 
         this.accommodationDao = accommodationDao;
         initializeTTLWatcher();
     }
 
     public AccommodationDto getAccommodation(int id) {
-        cacheAccessMap.computeIfAbsent(String.valueOf(id), k -> LocalTime.now());
-        return accommodationIdCache.computeIfAbsent(id, accommodationDao::getAccommodation);
+        requestAccessTimeMap.computeIfAbsent(String.valueOf(id), k -> LocalTime.now());
+        return accommodationIdValueMap.computeIfAbsent(id, accommodationDao::getAccommodation);
     }
 
     public List<AccommodationDto> getAccommodations(String hotelierId,
@@ -49,8 +52,8 @@ public class AccommodationCache {
                 Optional.ofNullable(city).orElse("") +
                 Optional.ofNullable(reputationBadge).map(ReputationBadgeEnum::getValue).orElse("");
 
-        cacheAccessMap.computeIfAbsent(key, k -> LocalTime.now());
-        return accommodationCriteriaCache.computeIfAbsent(key, k -> accommodationDao.getAccommodations(hotelierId, rating, city, reputationBadge));
+        requestAccessTimeMap.computeIfAbsent(key, k -> LocalTime.now());
+        return accommodationCriteriaValueMap.computeIfAbsent(key, k -> accommodationDao.getAccommodations(hotelierId, rating, city, reputationBadge));
     }
 
     /**
@@ -62,16 +65,16 @@ public class AccommodationCache {
     }
 
     private void clearCache() {
-        for (Map.Entry<String, LocalTime> entry : cacheAccessMap.entrySet()) {
+        for (Map.Entry<String, LocalTime> entry : requestAccessTimeMap.entrySet()) {
             if (entry.getValue().until(LocalTime.now(), ChronoUnit.SECONDS) >= TTL_IN_SEC) {
                 String key = entry.getKey();
                 try {
                     int intKey = Integer.parseInt(key);
-                    accommodationIdCache.remove(intKey);
+                    accommodationIdValueMap.remove(intKey);
                 } catch (NumberFormatException ex) {
-                    accommodationCriteriaCache.remove(key);
+                    accommodationCriteriaValueMap.remove(key);
                 } finally {
-                    cacheAccessMap.remove(key);
+                    requestAccessTimeMap.remove(key);
                 }
             }
         }
