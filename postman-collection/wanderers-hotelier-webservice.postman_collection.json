@@ -27,13 +27,15 @@
 					"raw": "{\r\n  \"name\": \"new hotel by thejana\",\r\n  \"rating\": 4,\r\n   \"category\": \"hotel\",\r\n  \"location\": {\r\n    \"city\": \"Kaluthara\",\r\n    \"state\": \"Eastern\",\r\n    \"country\": \"Sri Lanka\",\r\n    \"zip_code\": \"13455\",\r\n    \"address\": \"Ananda Kumaraswami Road\"\r\n  },\r\n  \"image\": \"thejana.com\",\r\n  \"reputation\": 99,\r\n  \"price\": 100,\r\n  \"availability\": 10\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8080/accommodations",
+					"raw": "http://localhost:8080/api/v1/accommodations",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
+						"v1",
 						"accommodations"
 					]
 				}
@@ -46,19 +48,25 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/accommodations?hotelier_id=CRFC",
+					"raw": "http://localhost:8080/api/v1/accommodations?hotelier_id=CRFC&rating=4",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
+						"v1",
 						"accommodations"
 					],
 					"query": [
 						{
 							"key": "hotelier_id",
 							"value": "CRFC"
+						},
+						{
+							"key": "rating",
+							"value": "4"
 						}
 					]
 				}
@@ -71,13 +79,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/accommodations/1",
+					"raw": "http://localhost:8080/api/v1/accommodations/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
+						"v1",
 						"accommodations",
 						"1"
 					]
@@ -106,13 +116,15 @@
 					"raw": "{\r\n   \"reputation\": 800,\r\n   \"location\": {\r\n    \"city\": \"Kelaniya\",\r\n    \"zip_code\": \"12345\"\r\n  }\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8080/accommodations/1",
+					"raw": "http://localhost:8080/api/v1/accommodations/1",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
+						"v1",
 						"accommodations",
 						"1"
 					]
@@ -141,13 +153,15 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8080/accommodations/2",
+					"raw": "http://localhost:8080/api/v1/accommodations/2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
+						"v1",
 						"accommodations",
 						"2"
 					]
@@ -176,13 +190,15 @@
 					"raw": "{\r\n    \"accommodation_id\": 1,\r\n    \"customer_id\": 1\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8080/bookings",
+					"raw": "http://localhost:8080/api/v1/bookings",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
+						"v1",
 						"bookings"
 					]
 				}

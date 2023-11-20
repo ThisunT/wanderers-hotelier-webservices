@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.*;
 
+/**
+ * Class is responsible for caching responses for fetch requests. Cache is focused on optimizing database calls.
+ */
 @Component("accommodation_cache")
 public class AccommodationCache {
 
@@ -50,6 +53,9 @@ public class AccommodationCache {
         return accommodationCriteriaCache.computeIfAbsent(key, k -> accommodationDao.getAccommodations(hotelierId, rating, city, reputationBadge));
     }
 
+    /**
+     * Background thread to check on the TTL status of the cached responses
+     */
     private void initializeTTLWatcher() {
         ScheduledExecutorService ttlWatcher = Executors.newSingleThreadScheduledExecutor();
         ttlWatcher.scheduleAtFixedRate(this::clearCache, 0, TTL_IN_SEC, TimeUnit.SECONDS);
