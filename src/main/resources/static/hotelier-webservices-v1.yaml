@@ -4,6 +4,9 @@ info:
   version: 0.0.1
   description: Wanderers webservices for awesome hoteliers.
 
+servers:
+  - url: http://localhost:8080/api/v1
+
 tags:
   - name: accommodation
     description: Accommodation Controller
