@@ -4,7 +4,6 @@ import com.wanderers.hotelier_webservices.rest.exception.ExpiredTokenException;
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.exception.RESTException;
 import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierException;
-import com.wanderers.hotelier_webservices.rest.model.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +13,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Optional;
+
+import static com.wanderers.hotelier_webservices.rest.exception.handler.ExceptionResponseEntityProvider.getExceptionResponse;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -28,10 +27,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex,
                                                                        HttpHeaders headers, HttpStatus status,
                                                                        WebRequest request) {
-        var response = new ExceptionResponse()
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getLocalizedMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
     }
 
     /**
@@ -50,10 +46,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             errorMsg = ex.getMostSpecificCause().getLocalizedMessage();
         }
 
-        var response = new ExceptionResponse()
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(errorMsg);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, errorMsg);
     }
 
     /**
@@ -74,50 +67,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             errMsg = fieldError.getField()  + " " + fieldError.getDefaultMessage() + ", " + "invalid value " + fieldError.getRejectedValue();
         }
 
-        var response = new ExceptionResponse()
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(errMsg);
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, errMsg);
     }
 
     @ExceptionHandler(RESTException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
     public ResponseEntity<Object> handleRequestException(RESTException ex) {
-        var response = new ExceptionResponse()
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage());
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
     public ResponseEntity<Object> handleHotelierIdException(ResourceNotFoundException ex) {
-        var response = new ExceptionResponse()
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .message(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return getExceptionResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage());
+
     }
 
     @ExceptionHandler(UnauthorizedHotelierException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ResponseBody
-    public ResponseEntity<ExceptionResponse> handleUnauthorizedHotelier(UnauthorizedHotelierException ex) {
-        var response = new ExceptionResponse()
-                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                .message(ex.getLocalizedMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Object> handleUnauthorizedHotelier(UnauthorizedHotelierException ex) {
+        return getExceptionResponse(HttpStatus.UNAUTHORIZED, ex.getLocalizedMessage());
+
     }
 
     @ExceptionHandler(ExpiredTokenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ResponseBody
-    public ResponseEntity<ExceptionResponse> handleExpiredToken(ExpiredTokenException ex) {
-        var response = new ExceptionResponse()
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-                .message(ex.getLocalizedMessage());
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    public ResponseEntity<Object> handleExpiredToken(ExpiredTokenException ex) {
+        return getExceptionResponse(HttpStatus.FORBIDDEN, ex.getLocalizedMessage());
     }
+
 }
