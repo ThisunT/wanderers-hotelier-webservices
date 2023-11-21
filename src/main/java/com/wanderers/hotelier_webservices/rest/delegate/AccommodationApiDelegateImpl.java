@@ -43,7 +43,7 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
         var hotelierId = getHotelierId();
         validator.validateAccommodationReq(accommodationRequest, hotelierId);
 
-        AccommodationDto accommodationReqDto = accommodationMapper.mapToDto(accommodationRequest, hotelierId);
+        AccommodationDto accommodationReqDto = accommodationMapper.mapToAccommodationDto(accommodationRequest, hotelierId);
         AccommodationDto accommodationResDto = accommodationService.create(accommodationReqDto);
         AccommodationResponseBody accommodationResponse = accommodationMapper.mapToRestAccommodation(accommodationResDto);
 
@@ -88,7 +88,7 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
 
         accommodationService.deleteAccommodation(id);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private String getHotelierId() {

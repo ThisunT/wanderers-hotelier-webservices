@@ -7,6 +7,9 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class is responsible for mapping a database accommodation entity into a server object
+ */
 public class AccommodationRowMapper implements RowMapper<AccommodationDto> {
 
     @Override

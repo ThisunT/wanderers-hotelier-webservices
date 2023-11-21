@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Primary;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * App Configuration class to maintain all the configuration related operations
+ */
 @Configuration
 public class AppConfig {
 

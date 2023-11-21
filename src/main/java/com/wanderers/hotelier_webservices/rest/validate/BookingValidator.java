@@ -24,13 +24,13 @@ public class BookingValidator {
 
     private void validateToken(String tokenStatus) {
         if(!Boolean.parseBoolean(tokenStatus)) {
-            throw new ExpiredTokenException("Token is expired");
+            throw new ExpiredTokenException("Auth token is expired");
         }
     }
 
     private void validateCustomer(int customerId) {
         if (Boolean.FALSE.equals(customerDao.isExistingCustomer(customerId))) {
-            throw new ResourceNotFoundException(customerId + " does not exists in the system. Please register!");
+            throw new ResourceNotFoundException("Customer: " + customerId + " does not exists in the system. Please register!");
         }
     }
 }

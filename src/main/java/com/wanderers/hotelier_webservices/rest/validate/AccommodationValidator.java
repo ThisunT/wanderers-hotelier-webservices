@@ -50,13 +50,13 @@ public class AccommodationValidator {
         String hotelierOfAccommodation = accommodationDao.getHotelierById(Integer.parseInt(id));
 
         if(!hotelierOfAccommodation.equals(hotelierId)) {
-            throw new UnauthorizedHotelierException(hotelierId + " is not authorized to alter the record");
+            throw new UnauthorizedHotelierException("Hotelier: " + hotelierId + " is not authorized to alter the record");
         }
     }
 
     private void validateHotelierId(String hotelierId) {
         if (Boolean.FALSE.equals(hotelierDao.isExistingHotelier(hotelierId))) {
-            throw new ResourceNotFoundException(hotelierId + " does not exists in the system. Please register!");
+            throw new ResourceNotFoundException("Hotelier: " + hotelierId + " does not exists in the system. Please register!");
         }
     }
 

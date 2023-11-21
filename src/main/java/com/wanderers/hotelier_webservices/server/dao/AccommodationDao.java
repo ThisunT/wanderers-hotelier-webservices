@@ -2,7 +2,7 @@ package com.wanderers.hotelier_webservices.server.dao;
 
 import com.wanderers.hotelier_webservices.mapper.AccommodationRowMapper;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
-import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBodyLocation;
+import com.wanderers.hotelier_webservices.rest.model.OptionalLocation;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException;
@@ -242,7 +242,7 @@ public class AccommodationDao {
     private String buildLocQueryForPatch(MapSqlParameterSource locParams, int id, AccommodationPatchBody patchDTO) {
         if (patchDTO.getLocation() != null) {
             StringBuilder locQueryBuilder = new StringBuilder();
-            AccommodationPatchBodyLocation location = patchDTO.getLocation();
+            OptionalLocation location = patchDTO.getLocation();
 
             final String initUpdateLocQuery = "UPDATE location SET ";
 

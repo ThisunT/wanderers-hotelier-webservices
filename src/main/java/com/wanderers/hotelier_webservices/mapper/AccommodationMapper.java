@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Component("accommodation_mapper")
 public class AccommodationMapper {
 
-    public AccommodationDto mapToDto(AccommodationRequestBody accommodationReq, String hotelierId) {
+    public AccommodationDto mapToAccommodationDto(AccommodationRequestBody accommodationReq, String hotelierId) {
         final AccommodationDto accommodationDto = new AccommodationDto();
 
         accommodationDto.setHotelierId(hotelierId);
