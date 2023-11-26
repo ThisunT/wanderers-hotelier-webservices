@@ -5,8 +5,8 @@ import com.wanderers.hotelier_webservices.rest.exception.InvalidPayloadException
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
-import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
-import com.wanderers.hotelier_webservices.server.dao.HotelierDao;
+import com.wanderers.hotelier_webservices.server.service.api.AccommodationService;
+import com.wanderers.hotelier_webservices.server.service.api.HotelierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +20,13 @@ public class AccommodationValidator {
 
     private static final Set<String> INVALID_ACCOMMODATION_NAMES = new HashSet<>(Arrays.asList("free", "offer", "book", "website"));
 
-    private final HotelierDao hotelierDao;
-    private final AccommodationDao accommodationDao;
+    private final HotelierService hotelierService;
+    private final AccommodationService accommodationService;
 
     @Autowired
-    AccommodationValidator(HotelierDao hotelierDao, AccommodationDao accommodationDao) {
-        this.hotelierDao = hotelierDao;
-        this.accommodationDao = accommodationDao;
+    AccommodationValidator(HotelierService hotelierService, AccommodationService accommodationService) {
+        this.hotelierService = hotelierService;
+        this.accommodationService = accommodationService;
     }
 
     public void validateAccommodationReq(AccommodationRequestBody accommodationReqBody, String hotelierId) {
@@ -47,7 +47,7 @@ public class AccommodationValidator {
     }
 
     private void validateHotelierAuthority(String id, String hotelierId) {
-        String hotelierOfAccommodation = accommodationDao.getHotelierById(Integer.parseInt(id));
+        String hotelierOfAccommodation = accommodationService.getHotelierByAccommodationId(id);
 
         if(!hotelierOfAccommodation.equals(hotelierId)) {
             throw new UnauthorizedHotelierException("Hotelier: " + hotelierId + " is not authorized to alter the record");
@@ -55,7 +55,7 @@ public class AccommodationValidator {
     }
 
     private void validateHotelierId(String hotelierId) {
-        if (Boolean.FALSE.equals(hotelierDao.isExistingHotelier(hotelierId))) {
+        if (Boolean.FALSE.equals(hotelierService.isExistingHotelier(hotelierId))) {
             throw new ResourceNotFoundException("Hotelier: " + hotelierId + " does not exists in the system. Please register!");
         }
     }

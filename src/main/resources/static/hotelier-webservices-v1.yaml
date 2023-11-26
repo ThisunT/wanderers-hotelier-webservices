@@ -258,12 +258,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
-        410:
-          description: Gone
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
 
 components:
   schemas:

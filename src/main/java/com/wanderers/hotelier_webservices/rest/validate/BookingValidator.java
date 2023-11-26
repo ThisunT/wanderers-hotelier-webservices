@@ -3,18 +3,18 @@ package com.wanderers.hotelier_webservices.rest.validate;
 import com.wanderers.hotelier_webservices.rest.exception.ExpiredTokenException;
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
 import com.wanderers.hotelier_webservices.rest.model.Booking;
-import com.wanderers.hotelier_webservices.server.dao.CustomerDao;
+import com.wanderers.hotelier_webservices.server.service.api.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("booking_validator")
 public class BookingValidator {
 
-    private final CustomerDao customerDao;
+    private final CustomerService customerService;
 
     @Autowired
-    BookingValidator(CustomerDao customerDao) {
-        this.customerDao = customerDao;
+    BookingValidator(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     public void validateBooking(Booking booking, String tokenStatus) {
@@ -29,7 +29,7 @@ public class BookingValidator {
     }
 
     private void validateCustomer(int customerId) {
-        if (Boolean.FALSE.equals(customerDao.isExistingCustomer(customerId))) {
+        if (Boolean.FALSE.equals(customerService.isExistingCustomer(customerId))) {
             throw new ResourceNotFoundException("Customer: " + customerId + " does not exists in the system. Please register!");
         }
     }

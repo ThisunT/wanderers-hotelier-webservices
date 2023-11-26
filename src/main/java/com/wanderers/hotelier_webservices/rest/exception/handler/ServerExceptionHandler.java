@@ -25,6 +25,6 @@ public class ServerExceptionHandler {
 
     @ExceptionHandler(BookingUnavailableException.class)
     public ResponseEntity<Object> handleBookingUnavailableException(BookingUnavailableException ex) {
-        return getExceptionResponse(HttpStatus.CONFLICT, ex.getLocalizedMessage());
+        return getExceptionResponse(HttpStatus.NOT_FOUND, ex.getLocalizedMessage());
     }
 }

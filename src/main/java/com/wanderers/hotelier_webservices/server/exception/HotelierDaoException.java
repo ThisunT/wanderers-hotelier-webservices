@@ -1,9 +1,9 @@
 package com.wanderers.hotelier_webservices.server.exception;
 
-import com.wanderers.hotelier_webservices.server.dao.HotelierDao;
+import com.wanderers.hotelier_webservices.server.dao.impl.HotelierDaoImpl;
 
 /**
- * Custom Exception class which used to throw failures in {@link HotelierDao}
+ * Custom Exception class which used to throw failures in {@link HotelierDaoImpl}
  */
 public class HotelierDaoException extends ServerException {
 

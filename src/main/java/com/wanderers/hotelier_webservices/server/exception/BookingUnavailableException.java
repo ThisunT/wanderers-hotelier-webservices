@@ -3,7 +3,7 @@ package com.wanderers.hotelier_webservices.server.exception;
 /**
  * Custom Exception class which used to throw when bookings are not available
  */
-public class BookingUnavailableException extends Exception {
+public class BookingUnavailableException extends ServerException {
 
     private static final long serialVersionUID = 1L;
 

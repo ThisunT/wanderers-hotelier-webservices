@@ -1,7 +1,7 @@
 package com.wanderers.hotelier_webservices.server.component;
 
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
-import com.wanderers.hotelier_webservices.server.dao.AccommodationDao;
+import com.wanderers.hotelier_webservices.server.dao.impl.AccommodationDaoImpl;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,10 +27,10 @@ public class AccommodationCache {
     private final ConcurrentMap<Integer, AccommodationDto> accommodationIdValueMap;
     private final ConcurrentMap<String, List<AccommodationDto>> accommodationCriteriaValueMap;
     private final ConcurrentMap<String, LocalTime> requestAccessTimeMap;
-    private final AccommodationDao accommodationDao;
+    private final AccommodationDaoImpl accommodationDao;
 
     @Autowired
-    AccommodationCache(AccommodationDao accommodationDao) {
+    AccommodationCache(AccommodationDaoImpl accommodationDao) {
         this.accommodationIdValueMap = new ConcurrentHashMap<>();
         this.accommodationCriteriaValueMap = new ConcurrentHashMap<>();
         this.requestAccessTimeMap = new ConcurrentHashMap<>();

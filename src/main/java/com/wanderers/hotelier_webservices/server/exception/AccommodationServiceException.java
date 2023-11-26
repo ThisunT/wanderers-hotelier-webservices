@@ -1,9 +1,9 @@
 package com.wanderers.hotelier_webservices.server.exception;
 
-import com.wanderers.hotelier_webservices.server.service.AccommodationService;
+import com.wanderers.hotelier_webservices.server.service.impl.AccommodationServiceImpl;
 
 /**
- * Custom Exception class which used to throw failures in {@link AccommodationService}
+ * Custom Exception class which used to throw failures in {@link AccommodationServiceImpl}
  */
 public class AccommodationServiceException extends ServerException {
 

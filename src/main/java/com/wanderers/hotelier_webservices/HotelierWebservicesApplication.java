@@ -11,7 +11,7 @@ import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGe
 @ComponentScan(
 		basePackages = {
 				"com.wanderers.hotelier_webservices.rest", "com.wanderers.hotelier_webservices.server",
-				"com.wanderers.hotelier_webservices.config", "com.wanderers.hotelier_webservices.mapper"
+				"com.wanderers.hotelier_webservices.config"
 		},
 		nameGenerator = FullyQualifiedAnnotationBeanNameGenerator.class
 )

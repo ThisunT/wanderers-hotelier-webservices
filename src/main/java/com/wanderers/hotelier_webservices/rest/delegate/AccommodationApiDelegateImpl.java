@@ -1,15 +1,15 @@
 package com.wanderers.hotelier_webservices.rest.delegate;
 
-import com.wanderers.hotelier_webservices.mapper.AccommodationMapper;
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate;
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException;
+import com.wanderers.hotelier_webservices.rest.mapper.AccommodationMapper;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
 import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.rest.validate.AccommodationValidator;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
-import com.wanderers.hotelier_webservices.server.service.AccommodationService;
+import com.wanderers.hotelier_webservices.server.service.api.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
