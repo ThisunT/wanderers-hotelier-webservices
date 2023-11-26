@@ -4,7 +4,6 @@ import com.wanderers.hotelier_webservices.rest.exception.ExpiredTokenException
 import com.wanderers.hotelier_webservices.rest.exception.RESTException
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException
 import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierException
-import com.wanderers.hotelier_webservices.rest.model.ExceptionResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,8 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.util.*
@@ -26,10 +23,7 @@ class RestExceptionHandler : ResponseEntityExceptionHandler() {
         headers: HttpHeaders, status: HttpStatus,
         request: WebRequest
     ): ResponseEntity<Any> {
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.BAD_REQUEST.reasonPhrase)
-            .message(ex.localizedMessage)
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, ex.localizedMessage)
     }
 
     /**
@@ -48,10 +42,7 @@ class RestExceptionHandler : ResponseEntityExceptionHandler() {
         } else {
             ex.mostSpecificCause.localizedMessage
         }
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.BAD_REQUEST.reasonPhrase)
-            .message(errorMsg)
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, errorMsg)
     }
 
     /**
@@ -72,49 +63,26 @@ class RestExceptionHandler : ResponseEntityExceptionHandler() {
         } else {
             fieldError.field + " " + fieldError.defaultMessage + ", " + "invalid value " + fieldError.rejectedValue
         }
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.BAD_REQUEST.reasonPhrase)
-            .message(errMsg)
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, errMsg)
     }
 
     @ExceptionHandler(RESTException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
     fun handleRequestException(ex: RESTException): ResponseEntity<Any> {
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.BAD_REQUEST.reasonPhrase)
-            .message(ex.message)
-        return ResponseEntity(response, HttpStatus.BAD_REQUEST)
+        return getExceptionResponse(HttpStatus.BAD_REQUEST, ex.localizedMessage)
     }
 
     @ExceptionHandler(ResourceNotFoundException::class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
     fun handleHotelierIdException(ex: ResourceNotFoundException): ResponseEntity<Any> {
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.NOT_FOUND.reasonPhrase)
-            .message(ex.message)
-        return ResponseEntity(response, HttpStatus.NOT_FOUND)
+        return getExceptionResponse(HttpStatus.NOT_FOUND, ex.localizedMessage)
     }
 
     @ExceptionHandler(UnauthorizedHotelierException::class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ResponseBody
-    fun handleUnauthorizedHotelier(ex: UnauthorizedHotelierException): ResponseEntity<ExceptionResponse> {
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.UNAUTHORIZED.reasonPhrase)
-            .message(ex.localizedMessage)
-        return ResponseEntity(response, HttpStatus.UNAUTHORIZED)
+    fun handleUnauthorizedHotelier(ex: UnauthorizedHotelierException): ResponseEntity<Any> {
+        return getExceptionResponse(HttpStatus.UNAUTHORIZED, ex.localizedMessage)
     }
 
     @ExceptionHandler(ExpiredTokenException::class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ResponseBody
-    fun handleExpiredToken(ex: ExpiredTokenException): ResponseEntity<ExceptionResponse> {
-        val response: Unit = ExceptionResponse()
-            .error(HttpStatus.FORBIDDEN.reasonPhrase)
-            .message(ex.localizedMessage)
-        return ResponseEntity(response, HttpStatus.FORBIDDEN)
+    fun handleExpiredToken(ex: ExpiredTokenException): ResponseEntity<Any> {
+        return getExceptionResponse(HttpStatus.FORBIDDEN, ex.localizedMessage)
     }
 }

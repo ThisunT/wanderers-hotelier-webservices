@@ -1,11 +1,11 @@
 package com.wanderers.hotelier_webservices.server.exception
 
-import com.wanderers.hotelier_webservices.server.dao.impl.CustomerDaoImpl
+import com.wanderers.hotelier_webservices.server.service.api.HotelierService
 
 /**
- * Custom Exception class which used to throw failures in [CustomerDaoImpl]
+ * Custom Exception class which used to throw failures in [HotelierService]
  */
-class CustomerDaoException
+class HotelierServiceException
 /**
  * Class constructor
  *

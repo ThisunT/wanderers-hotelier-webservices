@@ -1,4 +1,4 @@
-package com.wanderers.hotelier_webservices.server.dao
+package com.wanderers.hotelier_webservices.server.dao.impl
 
 import com.wanderers.hotelier_webservices.rest.model.Booking
 import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.INSERT_BOOKING
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository
  * Class is responsible for datasource manipulations of booking
  */
 @Repository("booking_dao")
-class BookingDao @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class BookingDaoImpl @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
     @Throws(AccommodationDaoException::class, BookingDaoException::class)
     fun create(booking: Booking?): Booking {
         return try {

@@ -9,7 +9,7 @@ class BookingUnavailableException
  *
  * @param message String value of Exception
  */
-    (message: String?) : Exception(message) {
+    (message: String?) : ServerException(message) {
     companion object {
         private const val serialVersionUID = 1L
     }

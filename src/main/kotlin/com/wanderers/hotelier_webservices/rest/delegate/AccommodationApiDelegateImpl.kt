@@ -1,14 +1,15 @@
 package com.wanderers.hotelier_webservices.rest.delegate
 
-import com.wanderers.hotelier_webservices.mapper.AccommodationMapper
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException
+import com.wanderers.hotelier_webservices.rest.mapper.AccommodationMapper
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody
 import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum
 import com.wanderers.hotelier_webservices.rest.validate.AccommodationValidator
-import com.wanderers.hotelier_webservices.server.service.AccommodationService
+import com.wanderers.hotelier_webservices.server.dto.AccommodationDto
+import com.wanderers.hotelier_webservices.server.service.api.AccommodationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,17 +22,24 @@ import javax.servlet.http.HttpServletRequest
  */
 @Service("accommodation_api_delegate")
 class AccommodationApiDelegateImpl @Autowired internal constructor(
-    servletRequest: HttpServletRequest?, private val accommodationMapper: AccommodationMapper,
-    private val accommodationService: AccommodationService, private val validator: AccommodationValidator
-) : AbstractApiDelegate(servletRequest), AccommodationApiDelegate {
+    servletRequest: HttpServletRequest?, accommodationMapper: AccommodationMapper,
+    accommodationService: AccommodationService, validator: AccommodationValidator
+) : AbstractApiDelegate(servletRequest!!), AccommodationApiDelegate {
+    private val validator: AccommodationValidator
+    private val accommodationMapper: AccommodationMapper
+    private val accommodationService: AccommodationService
 
-    override fun createAccommodation(
-        hotelierId: String,
-        accommodationRequest: AccommodationRequestBody
-    ): ResponseEntity<AccommodationResponseBody> {
-        validator.validateAccommodationReq(accommodationRequest, hotelierId)
-        val accommodationReqDto = accommodationMapper.mapToDto(accommodationRequest, hotelierId)
-        val accommodationResDto = accommodationService.create(accommodationReqDto)
+    init {
+        this.accommodationService = accommodationService
+        this.accommodationMapper = accommodationMapper
+        this.validator = validator
+    }
+
+    fun createAccommodation(accommodationRequest: AccommodationRequestBody?): ResponseEntity<AccommodationResponseBody> {
+        val hotelierId = hotelierId
+        validator.validateAccommodationReq(accommodationRequest!!, hotelierId)
+        val accommodationReqDto = accommodationMapper.mapToAccommodationDto(accommodationRequest, hotelierId)
+        val accommodationResDto: AccommodationDto = accommodationService.create(accommodationReqDto)
         val accommodationResponse = accommodationMapper.mapToRestAccommodation(accommodationResDto)
         return ResponseEntity(accommodationResponse, HttpStatus.CREATED)
     }
@@ -42,35 +50,34 @@ class AccommodationApiDelegateImpl @Autowired internal constructor(
         city: String?,
         reputationBadge: ReputationBadgeEnum?
     ): ResponseEntity<List<AccommodationResponseBody>> {
-        val accommodationDTOs = accommodationService.getAccommodations(hotelierId, rating, city, reputationBadge)
+        val accommodationDTOs: List<AccommodationDto> =
+            accommodationService.getAccommodations(hotelierId, rating, city, reputationBadge)
         val accommodationsResponse = accommodationMapper.mapToRestAccommodations(accommodationDTOs)
         return ResponseEntity(accommodationsResponse, HttpStatus.OK)
     }
 
     override fun getAccommodationById(id: String): ResponseEntity<AccommodationResponseBody> {
-        val accommodationDto = accommodationService.getAccommodation(id)
+        val accommodationDto: AccommodationDto = accommodationService.getAccommodation(id)
         val accommodationsResponse = accommodationMapper.mapToRestAccommodation(accommodationDto)
         return ResponseEntity(accommodationsResponse, HttpStatus.OK)
     }
 
-    override fun updateAccommodationById(
-        hotelierId: String,
-        id: String,
-        accommodationPatchBody: AccommodationPatchBody
-    ): ResponseEntity<Unit> {
-        validator.validateAccommodationPatch(id, accommodationPatchBody, hotelierId)
-        accommodationService.patchAccommodation(id, accommodationPatchBody)
+    fun updateAccommodationById(id: String?, body: AccommodationPatchBody?): ResponseEntity<Void> {
+        val hotelierId = hotelierId
+        validator.validateAccommodationPatch(id!!, body!!, hotelierId)
+        accommodationService.patchAccommodation(id, body)
         return ResponseEntity(HttpStatus.OK)
     }
 
-    override fun deleteAccommodationById(hotelierId: String, id: String): ResponseEntity<Unit> {
-        validator.validateHotelier(hotelierId, id)
+    fun deleteAccommodationById(id: String?): ResponseEntity<Void> {
+        val hotelierId = hotelierId
+        validator.validateHotelier(hotelierId, id!!)
         accommodationService.deleteAccommodation(id)
-        return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     private val hotelierId: String
-        get() = Optional.ofNullable(getServletRequest().getHeader("Hotelier-Id"))
+        private get() = Optional.ofNullable(getServletRequest().getHeader("Hotelier-Id"))
             .orElseThrow {
                 ResourceNotFoundException(
                     "Hotelier-Id header cannot be null"

@@ -1,17 +1,34 @@
 version: '3'
 services:
+  db:
+    image: postgres:latest
+    container_name: hotelier-db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+    tty: true
+    ports:
+      - 5432:5432
+    volumes:
+      - ./psql:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
   wanderers-webservices:
+    depends_on:
+      - db
     build: .
     restart: unless-stopped
     container_name: hotelier-webservices
     ports:
       - 8080:8080
     networks:
-      - db_app-network
+      - app-network
 
 networks:
-  db_app-network:
-    external: true
+  app-network:
+    driver: bridge
 
 
 

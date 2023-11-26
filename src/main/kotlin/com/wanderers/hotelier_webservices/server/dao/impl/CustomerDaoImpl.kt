@@ -1,4 +1,4 @@
-package com.wanderers.hotelier_webservices.server.dao
+package com.wanderers.hotelier_webservices.server.dao.impl
 
 import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.EXISTS_CUSTOMER
 import com.wanderers.hotelier_webservices.server.exception.HotelierDaoException
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
  * Class is responsible for datasource manipulations of customer
  */
 @Repository("customer_dao")
-class CustomerDao @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class CustomerDaoImpl @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
     @SneakyThrows
     fun isExistingCustomer(customerId: Int): Boolean {
         return try {

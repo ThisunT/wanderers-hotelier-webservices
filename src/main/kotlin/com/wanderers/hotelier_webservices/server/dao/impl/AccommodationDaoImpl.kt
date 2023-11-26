@@ -1,4 +1,4 @@
-package com.wanderers.hotelier_webservices.server.dao
+package com.wanderers.hotelier_webservices.server.dao.impl
 
 import com.wanderers.hotelier_webservices.mapper.AccommodationRowMapper
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody
@@ -26,7 +26,7 @@ import java.util.*
  * Class is responsible for datasource manipulations of accommodation
  */
 @Repository("accommodation_dao")
-class AccommodationDao @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class AccommodationDaoImpl @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
     @Throws(AccommodationDaoException::class)
     fun create(accommodationDto: AccommodationDto): AccommodationDto {
         return try {

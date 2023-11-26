@@ -18,6 +18,7 @@ class AppConfig {
         props.setProperty("dataSource.user", "postgres")
         props.setProperty("dataSource.password", "pass")
         props.setProperty("dataSource.url", "jdbc:postgresql://localhost:5432/wanderers")
+
         val config = HikariConfig(props)
         config.maximumPoolSize = 3
         config.initializationFailTimeout = -1
@@ -26,6 +27,7 @@ class AppConfig {
         config.connectionInitSql = "SELECT 1"
         config.idleTimeout = 300000
         config.leakDetectionThreshold = 900000
+
         return HikariDataSource(config)
     }
 }

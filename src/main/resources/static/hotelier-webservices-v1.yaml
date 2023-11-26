@@ -4,6 +4,9 @@ info:
   version: 0.0.1
   description: Wanderers webservices for awesome hoteliers.
 
+servers:
+  - url: http://localhost:8080/api/v1
+
 tags:
   - name: accommodation
     description: Accommodation Controller
@@ -16,7 +19,7 @@ paths:
       tags:
         - accommodation
       summary: Get accommodations
-      description: Get accommodations filtered by several parameters or not
+      description: Get accommodations filtered by hotelier_id, rating, city or reputation_badge
       operationId: getAccommodations
       parameters:
         - name: hotelier_id
@@ -53,6 +56,12 @@ paths:
                 description: A list of accommodations.
                 items:
                   $ref: '#/components/schemas/AccommodationResponseBody'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
     post:
       tags:
         - accommodation
@@ -114,6 +123,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccommodationResponseBody'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
     delete:
       tags:
         - accommodation
@@ -138,6 +159,12 @@ paths:
           description: Deleted
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        404:
+          description: Not found
           content:
             application/json:
               schema:
@@ -169,10 +196,22 @@ paths:
               $ref: '#/components/schemas/AccommodationPatchBody'
         required: true
       responses:
-        204:
+        200:
           description: Updated
         401:
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        404:
+          description: Not found
           content:
             application/json:
               schema:
@@ -207,8 +246,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Booking'
-        410:
-          description: Gone
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        404:
+          description: Not found
           content:
             application/json:
               schema:
@@ -216,83 +261,8 @@ paths:
 
 components:
   schemas:
-    AccommodationRequestBody:
-      title: Accommodation Request Body
-      type: object
-      properties:
-        name:
-          type: string
-          minLength: 10
-          description: Name of the accommodation. Following words are not accepted ["Free", "Offer", "Book", "Website"]
-        rating:
-          type: integer
-          minimum: 0
-          maximum: 5
-          description: Rating of the accommodation.
-        category:
-          type: string
-          enum:
-            - hotel
-            - alternative
-            - hostel
-            - lodge
-            - resort
-            - guest-house
-          description: Type of the accommodation
-        location:
-          $ref: '#/components/schemas/Location'
-        image:
-          type: string
-          pattern: '[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
-          description: URL of the image
-        reputation:
-          type: integer
-          minimum: 0
-          maximum: 1000
-          description: Reputation of the accommodation
-        price:
-          type: integer
-          description: Price of the accommodation
-        availability:
-          type: integer
-          description: Available number of accommodation units
-      required:
-        - name
-        - rating
-        - category
-        - location
-        - image
-        - reputation
-        - price
-        - availability
-
-    AccommodationResponseBody:
-      title: Accommodation Response Body
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Identifier of the accommodation
-        reputation_badge:
-          $ref: '#/components/schemas/ReputationBadgeEnum'
-      allOf:
-        - $ref: '#/components/schemas/AccommodationRequestBody'
-
-    ReputationBadgeEnum:
-      title: Reputation Badge
-      type: string
-      enum:
-        - green
-        - yellow
-        - red
-      description: Type of the reputation badge
-      x-enum-varnames:
-        - green
-        - yellow
-        - red
-
-    Location:
-      title: Location
+    OptionalLocation:
+      title: Optional Location
       type: object
       properties:
         city:
@@ -312,13 +282,21 @@ components:
         address:
           type: string
           description: Address of the accommodation
+
+    Location:
+      title: Location
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/OptionalLocation'
       required:
         - city
+        - state
         - country
         - zip_code
+        - address
 
-    AccommodationPatchBody:
-      title: Accommodation Patch Body
+    AccommodationBase:
+      title: Accommodation Base
       type: object
       properties:
         name:
@@ -340,29 +318,10 @@ components:
             - resort
             - guest-house
           description: Type of the accommodation
-        location:
-          type: object
-          properties:
-            city:
-              type: string
-              description: City of the accommodation
-            state:
-              type: string
-              description: State of the accommodation
-            country:
-              type: string
-              description: Country of the accommodation
-            zip_code:
-              type: string
-              minLength: 5
-              maxLength: 5
-              description: Zip code of the accommodation
-            address:
-              type: string
-              description: Address of the accommodation
         image:
           type: string
           pattern: '[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
+          example: 'image-url.com'
           description: URL of the image
         reputation:
           type: integer
@@ -376,6 +335,64 @@ components:
           type: integer
           description: Available number of accommodation units
 
+    AccommodationPatchBody:
+      title: Accommodation Patch Body
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/OptionalLocation'
+      allOf:
+        - $ref: '#/components/schemas/AccommodationBase'
+
+    AccommodationRequestBody:
+      title: Accommodation Request Body
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/Location'
+      allOf:
+        - $ref: '#/components/schemas/AccommodationBase'
+      required:
+        - name
+        - rating
+        - category
+        - location
+        - image
+        - reputation
+        - price
+        - availability
+
+    AccommodationResponseBody:
+      title: Accommodation Response Body
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identifier of the accommodation
+        reputation_badge:
+          $ref: '#/components/schemas/ReputationBadgeEnum'
+        location:
+          $ref: '#/components/schemas/Location'
+      allOf:
+        - $ref: '#/components/schemas/AccommodationRequestBody'
+      required:
+        - id
+        - reputation_badge
+        - location
+
+    ReputationBadgeEnum:
+      title: Reputation Badge
+      type: string
+      enum:
+        - green
+        - yellow
+        - red
+      description: Type of the reputation badge
+      x-enum-varnames:
+        - green
+        - yellow
+        - red
+
     Booking:
       title: Booking
       type: object
@@ -386,9 +403,6 @@ components:
         customer_id:
           type: integer
           description: Identifier of the customer
-      required:
-        - accommodation_id
-        - customer_id
 
     ExceptionResponse:
       title: Exception Response

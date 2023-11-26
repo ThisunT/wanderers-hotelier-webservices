@@ -9,19 +9,19 @@ import lombok.Setter
 @Setter
 @NoArgsConstructor
 class AccommodationDto {
-    var id = 0
-    var hotelierId: String? = null
-    var name: String? = null
-    var rating = 0
-    var category: String? = null
-    var city: String? = null
-    var state: String? = null
-    var country: String? = null
-    var zipCode: String? = null
-    var address: String? = null
-    var image: String? = null
-    var reputation = 0
-    var reputationBadge: ReputationBadgeEnum? = null
-    var price = 0
-    var availability = 0
+    private val id = 0
+    private val hotelierId: String? = null
+    private val name: String? = null
+    private val rating = 0
+    private val category: String? = null
+    private val city: String? = null
+    private val state: String? = null
+    private val country: String? = null
+    private val zipCode: String? = null
+    private val address: String? = null
+    private val image: String? = null
+    private val reputation = 0
+    private val reputationBadge: ReputationBadgeEnum? = null
+    private val price = 0
+    private val availability = 0
 }

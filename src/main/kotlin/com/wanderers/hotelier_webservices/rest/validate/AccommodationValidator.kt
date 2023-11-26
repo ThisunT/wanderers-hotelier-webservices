@@ -6,8 +6,8 @@ import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierExc
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBodyLocation
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody
-import com.wanderers.hotelier_webservices.server.dao.AccommodationDao
-import com.wanderers.hotelier_webservices.server.dao.HotelierDao
+import com.wanderers.hotelier_webservices.server.service.api.AccommodationService
+import com.wanderers.hotelier_webservices.server.service.api.HotelierService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.lang.Boolean
@@ -17,8 +17,8 @@ import kotlin.String
 
 @Component("accommodation_validator")
 class AccommodationValidator @Autowired internal constructor(
-    private val hotelierDao: HotelierDao,
-    private val accommodationDao: AccommodationDao
+    private val hotelierService: HotelierService,
+    private val accommodationService: AccommodationService
 ) {
     fun validateAccommodationReq(accommodationReqBody: AccommodationRequestBody, hotelierId: String) {
         validateHotelierId(hotelierId)
@@ -27,7 +27,7 @@ class AccommodationValidator @Autowired internal constructor(
     }
 
     fun validateAccommodationPatch(
-        accommodationId: String,
+        accommodationId: String?,
         accommodationPatchBody: AccommodationPatchBody,
         hotelierId: String
     ) {
@@ -45,21 +45,21 @@ class AccommodationValidator @Autowired internal constructor(
             }.ifPresent { zipCode: String -> validateZipCode(zipCode) }
     }
 
-    fun validateHotelier(hotelierId: String, accommodationId: String) {
+    fun validateHotelier(hotelierId: String, accommodationId: String?) {
         validateHotelierId(hotelierId)
         validateHotelierAuthority(accommodationId, hotelierId)
     }
 
-    private fun validateHotelierAuthority(id: String, hotelierId: String) {
-        val hotelierOfAccommodation = accommodationDao.getHotelierById(id.toInt())
+    private fun validateHotelierAuthority(id: String?, hotelierId: String) {
+        val hotelierOfAccommodation = accommodationService.getHotelierByAccommodationId(id)
         if (hotelierOfAccommodation != hotelierId) {
-            throw UnauthorizedHotelierException("$hotelierId is not authorized to alter the record")
+            throw UnauthorizedHotelierException("Hotelier: $hotelierId is not authorized to alter the record")
         }
     }
 
     private fun validateHotelierId(hotelierId: String) {
-        if (Boolean.FALSE == hotelierDao.isExistingHotelier(hotelierId)) {
-            throw ResourceNotFoundException("$hotelierId does not exists in the system. Please register!")
+        if (Boolean.FALSE == hotelierService.isExistingHotelier(hotelierId)) {
+            throw ResourceNotFoundException("Hotelier: $hotelierId does not exists in the system. Please register!")
         }
     }
 
