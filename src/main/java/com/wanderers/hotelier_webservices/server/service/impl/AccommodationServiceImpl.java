@@ -93,6 +93,8 @@ public class AccommodationServiceImpl implements AccommodationService {
     public String getHotelierByAccommodationId(String id) {
         try {
             return accommodationDao.getHotelierByAccommodationId(Integer.parseInt(id));
+        } catch (ResultNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             throw new AccommodationServiceException("Failed retrieving hotelier by accommodation id", e);
         }

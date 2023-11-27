@@ -113,7 +113,7 @@ public class AccommodationDaoImpl implements AccommodationDao {
     }
 
     @Override
-    public String getHotelierByAccommodationId(int id) {
+    public String getHotelierByAccommodationId(int id) throws ResultNotFoundException, AccommodationDaoException {
         log.info("Fetching hotelier of Id: {}", id);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();

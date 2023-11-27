@@ -52,7 +52,7 @@ public interface AccommodationDao {
      * @param id
      * @return Hotelier Id
      */
-    String getHotelierByAccommodationId(int id);
+    String getHotelierByAccommodationId(int id) throws ResultNotFoundException, AccommodationDaoException;
 
     /**
      * Update accommodation by provided new field values
@@ -68,7 +68,7 @@ public interface AccommodationDao {
      * Delete an accommodation
      * @param id
      */
-    void deleteAccommodation(int id);
+    void deleteAccommodation(int id) throws AccommodationDaoException;
 
     /**
      * Get the availability of an accommodation
