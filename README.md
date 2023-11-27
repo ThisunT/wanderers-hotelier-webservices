@@ -1,7 +1,7 @@
 # wanderers-hotelier-webservices
 Webservices platform of Wanderers
 
-To launch the application, execute `docker-compose up` in the root directory of the repository. If the Docker Gradle build fails, a pre-built artifact has been provided. Please follow the instructions in the Dockerfile to make the necessary modifications and retry.
+Application is available in both Java and Kotlin in the branches main and kotlin_migration respectively. To launch the application in either platform, execute `docker-compose up` in the root directory of the selected branch. If the Docker Gradle build fails, a pre-built artifact has been provided. Please follow the instructions in the Dockerfile to make the necessary modifications and retry.
 
 The OpenAPI Spec is located at `/src/main/resources/static/hotelier-webservices-v1.yaml`. This specification was used to generate API interfaces and models. Once the server is running it can be visualized at [http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/).
 
