@@ -9,6 +9,7 @@ import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundExcepti
  * Contract that is responsible for maintaining business logic of bookings
  */
 interface BookingService {
+
     /**
      * Create a booking over the booking data
      *

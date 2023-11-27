@@ -9,15 +9,16 @@ import java.util.*
 import javax.sql.DataSource
 
 @Configuration
-open class AppConfig {
+class AppConfig {
+
     @Bean
     @Primary
-    open fun dataSource(): DataSource {
+    fun dataSource(): DataSource {
         val props = Properties()
         props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource")
         props.setProperty("dataSource.user", "postgres")
         props.setProperty("dataSource.password", "pass")
-        props.setProperty("dataSource.url", "jdbc:postgresql://localhost:5432/wanderers")
+        props.setProperty("dataSource.url", "jdbc:postgresql://db:5432/postgres")
 
         val config = HikariConfig(props)
         config.maximumPoolSize = 3

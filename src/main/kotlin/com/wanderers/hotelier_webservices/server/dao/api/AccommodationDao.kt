@@ -71,6 +71,7 @@ interface AccommodationDao {
      * Delete an accommodation
      * @param id
      */
+    @kotlin.Throws(AccommodationDaoException::class)
     fun deleteAccommodation(id: Int)
 
     /**

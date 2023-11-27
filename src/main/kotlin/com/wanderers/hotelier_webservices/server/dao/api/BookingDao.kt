@@ -7,6 +7,7 @@ import com.wanderers.hotelier_webservices.server.exception.BookingDaoException
  * Data access contract for the booking entity
  */
 interface BookingDao {
+
     /**
      * Create a booking record over the provided data
      *

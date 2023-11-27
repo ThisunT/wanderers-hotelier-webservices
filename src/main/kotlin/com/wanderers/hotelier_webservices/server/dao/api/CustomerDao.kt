@@ -6,6 +6,7 @@ import com.wanderers.hotelier_webservices.server.exception.CustomerDaoException
  * Data access contract for the customer entity
  */
 interface CustomerDao {
+
     /**
      * Check if the customer exists in the datasource
      *

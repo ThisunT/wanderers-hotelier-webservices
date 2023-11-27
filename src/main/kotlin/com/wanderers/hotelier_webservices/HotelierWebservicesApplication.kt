@@ -7,7 +7,7 @@ import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGe
 
 @ComponentScan(	basePackages = ["com.wanderers.hotelier_webservices.rest", "com.wanderers.hotelier_webservices.server", "com.wanderers.hotelier_webservices.config"])
 @SpringBootApplication(nameGenerator = FullyQualifiedAnnotationBeanNameGenerator::class)
-open class HotelierWebservicesApplication
+class HotelierWebservicesApplication
 
 fun main(args: Array<String>) {
 	runApplication<HotelierWebservicesApplication>(*args)

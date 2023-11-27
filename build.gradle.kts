@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.5.10"
+	kotlin("jvm") version "1.6.10"
+	kotlin("plugin.spring") version "1.6.10"
 	id("org.springframework.boot") version "2.7.16"
 	id("io.spring.dependency-management") version "1.1.4"
 	id("org.openapi.generator") version "7.1.0"
@@ -9,6 +10,7 @@ plugins {
 
 group = "com.wanderers"
 version = "0.0.1-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
@@ -21,6 +23,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib")
+	implementation("org.springframework.boot:spring-boot-devtools")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	implementation("io.swagger.core.v3:swagger-annotations:2.2.8")
 	implementation("io.swagger.core.v3:swagger-models:2.2.8")
@@ -54,6 +59,9 @@ kotlin.sourceSets["main"].kotlin.srcDirs("$buildDir/generated/openapi/src/main/k
 tasks.withType<KotlinCompile> {
 	dependsOn(tasks.named("openApiGenerate"))
 	kotlinOptions.jvmTarget = "11"
+	kotlinOptions {
+		freeCompilerArgs += "-Xjsr305=strict"
+	}
 }
 
 tasks.register<Zip>("buildZip") {
@@ -69,7 +77,7 @@ tasks.named("build") {
 }
 
 springBoot {
-	mainClass.set("com.wanderers.hotelier_webservices.HotelierWebservicesApplication")
+	mainClass.set("com.wanderers.hotelier_webservices.HotelierWebservicesApplicationKt")
 }
 
 tasks.test {

@@ -9,6 +9,7 @@ import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceE
  * Contract that is responsible for maintaining business logic of accommodations
  */
 interface AccommodationService {
+
     /**
      * Create accommodation given the accommodation data
      *

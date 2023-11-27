@@ -84,7 +84,10 @@ class AccommodationServiceImpl @Autowired internal constructor(
     override fun getHotelierByAccommodationId(id: String): String {
         return try {
             accommodationDao.getHotelierByAccommodationId(id.toInt())
-        } catch (e: Exception) {
+        } catch (e: ResultNotFoundException) {
+            throw e;
+        }
+        catch (e: Exception) {
             throw AccommodationServiceException("Failed retrieving hotelier by accommodation id", e)
         }
     }

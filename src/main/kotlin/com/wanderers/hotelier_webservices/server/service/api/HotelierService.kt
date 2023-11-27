@@ -3,6 +3,7 @@ package com.wanderers.hotelier_webservices.server.service.api
 import com.wanderers.hotelier_webservices.server.exception.HotelierServiceException
 
 interface HotelierService {
+
     /**
      * Check if the hotelier exist in the datasource
      *
