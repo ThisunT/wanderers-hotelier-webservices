@@ -1,6 +1,5 @@
 package com.wanderers.hotelier_webservices.server.dto;
 
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,19 +8,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AccommodationDto {
-    private int id;
+    private Integer id;
     private String hotelierId;
     private String name;
-    private int rating;
-    private String category;
+    private Integer rating;
+    private Category category;
     private String city;
     private String state;
     private String country;
     private String zipCode;
     private String address;
     private String image;
-    private int reputation;
-    private ReputationBadgeEnum reputationBadge;
-    private int price;
-    private int availability;
+    private Integer reputation;
+    private ReputationBadge reputationBadge;
+    private Integer price;
+    private Integer availability;
 }

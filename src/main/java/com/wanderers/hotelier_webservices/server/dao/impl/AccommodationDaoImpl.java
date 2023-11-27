@@ -1,10 +1,8 @@
 package com.wanderers.hotelier_webservices.server.dao.impl;
 
-import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
-import com.wanderers.hotelier_webservices.rest.model.OptionalLocation;
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dao.api.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException;
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
 import com.wanderers.hotelier_webservices.server.mapper.AccommodationRowMapper;
@@ -42,7 +40,7 @@ public class AccommodationDaoImpl implements AccommodationDao {
             MapSqlParameterSource params = new MapSqlParameterSource()
                     .addValue("name", accommodationDto.getName())
                     .addValue("rating", accommodationDto.getRating())
-                    .addValue("category", accommodationDto.getCategory())
+                    .addValue("category", accommodationDto.getCategory().value.toUpperCase())
                     .addValue("city", accommodationDto.getCity())
                     .addValue("state", accommodationDto.getState())
                     .addValue("country", accommodationDto.getCountry())
@@ -50,7 +48,7 @@ public class AccommodationDaoImpl implements AccommodationDao {
                     .addValue("address", accommodationDto.getAddress())
                     .addValue("image", accommodationDto.getImage())
                     .addValue("reputation", accommodationDto.getReputation())
-                    .addValue("reputationBadge", accommodationDto.getReputationBadge().getValue().toUpperCase())
+                    .addValue("reputationBadge", accommodationDto.getReputationBadge().value.toUpperCase())
                     .addValue("price", accommodationDto.getPrice())
                     .addValue("availability", accommodationDto.getAvailability())
                     .addValue("hotelierId", accommodationDto.getHotelierId());
@@ -68,7 +66,7 @@ public class AccommodationDaoImpl implements AccommodationDao {
 
     @Override
     public List<AccommodationDto> getAccommodations(String hotelierId, Integer rating,
-                                                    String city, ReputationBadgeEnum reputationBadge) throws AccommodationDaoException {
+                                                    String city, ReputationBadge reputationBadge) throws AccommodationDaoException {
         log.info("Fetching accommodations for: {}", hotelierId);
         try {
             MapSqlParameterSource params = new MapSqlParameterSource();
@@ -84,7 +82,7 @@ public class AccommodationDaoImpl implements AccommodationDao {
                         return " AND city = :city";
                     }).orElse("") +
                     Optional.ofNullable(reputationBadge).map(rb -> {
-                        params.addValue("reputationBadge", rb.getValue().toUpperCase());
+                        params.addValue("reputationBadge", rb.value.toUpperCase());
                         return " AND reputation_badge = :reputationBadge::reputation_badge_enum";
                     }).orElse("");
 
@@ -130,14 +128,14 @@ public class AccommodationDaoImpl implements AccommodationDao {
 
     @Override
     @Transactional
-    public void patchAccommodation(int id, AccommodationPatchBody patchDTO, ReputationBadgeEnum reputationBadgeEnum) throws AccommodationDaoException {
+    public void patchAccommodation(int id, AccommodationDto accommodationDto, ReputationBadge reputationBadge) throws AccommodationDaoException {
         log.info("Patching accommodation of Id: {}", id);
         try {
             MapSqlParameterSource accParams = new MapSqlParameterSource();
             MapSqlParameterSource locParams = new MapSqlParameterSource();
 
-            String accQuery = buildAccQueryForPatch(accParams, id, patchDTO, reputationBadgeEnum);
-            String locQuery = buildLocQueryForPatch(locParams, id, patchDTO);
+            String accQuery = buildAccQueryForPatch(accParams, id, accommodationDto, reputationBadge);
+            String locQuery = buildLocQueryForPatch(locParams, id, accommodationDto);
 
             if (accQuery != null) {
                 namedParameterJdbcTemplate.update(accQuery, accParams);
@@ -196,40 +194,40 @@ public class AccommodationDaoImpl implements AccommodationDao {
         }
     }
 
-    private String buildAccQueryForPatch(MapSqlParameterSource accParams, int id, AccommodationPatchBody patchDTO, ReputationBadgeEnum reputationBadgeEnum) {
+    private String buildAccQueryForPatch(MapSqlParameterSource accParams, int id, AccommodationDto accommodationDto, ReputationBadge reputationBadge) {
         StringBuilder accQueryBuilder = new StringBuilder();
         final String initUpdateAccQuery = "UPDATE accommodation SET ";
 
         accQueryBuilder.append(initUpdateAccQuery)
-                .append(Optional.ofNullable(patchDTO.getName()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getName()).map(val -> {
                     accParams.addValue("name", val);
                     return " name = :name,";
                 }).orElse(""))
-                .append(Optional.ofNullable(patchDTO.getRating()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getRating()).map(val -> {
                     accParams.addValue("rating", val);
                     return " rating = :rating,";
                 }).orElse(""))
-                .append(Optional.ofNullable(patchDTO.getCategory()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getCategory()).map(val -> {
                     accParams.addValue("category", val);
                     return " category = :category::accommodation_category_enum,";
                 }).orElse(""))
-                .append(Optional.ofNullable(patchDTO.getImage()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getImage()).map(val -> {
                     accParams.addValue("image", val);
                     return " image = :image,";
                 }).orElse(""))
-                .append(Optional.ofNullable(patchDTO.getReputation()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getReputation()).map(val -> {
                     accParams.addValue("reputation", val);
                     return " reputation = :reputation,";
                 }).orElse(""))
-                .append(Optional.ofNullable(reputationBadgeEnum).map(val -> {
-                    accParams.addValue("reputationBadge", val.getValue().toUpperCase());
+                .append(Optional.ofNullable(reputationBadge).map(val -> {
+                    accParams.addValue("reputationBadge", val.value.toUpperCase());
                     return " reputation_badge = :reputationBadge::reputation_badge_enum,";
                 }).orElse(""))
-                .append(Optional.ofNullable(patchDTO.getPrice()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getPrice()).map(val -> {
                     accParams.addValue("price", val);
                     return " price = :price,";
                 }).orElse(""))
-                .append(Optional.ofNullable(patchDTO.getAvailability()).map(val -> {
+                .append(Optional.ofNullable(accommodationDto.getAvailability()).map(val -> {
                     accParams.addValue("availability", val);
                     return " availability = :availability,";
                 }).orElse(""));
@@ -246,34 +244,33 @@ public class AccommodationDaoImpl implements AccommodationDao {
         return accQueryBuilder.toString();
     }
 
-    private String buildLocQueryForPatch(MapSqlParameterSource locParams, int id, AccommodationPatchBody patchDTO) {
-        if (patchDTO.getLocation() != null) {
+    private String buildLocQueryForPatch(MapSqlParameterSource locParams, int id, AccommodationDto accommodationDto) {
+        if (accommodationDto != null) {
             StringBuilder locQueryBuilder = new StringBuilder();
-            OptionalLocation location = patchDTO.getLocation();
 
             final String initUpdateLocQuery = "UPDATE location SET ";
 
             locQueryBuilder.append(initUpdateLocQuery)
-                    .append(Optional.ofNullable(location.getCity()).map(val -> {
-                        locParams.addValue("city", val);
-                        return " city = :city,";
-                    }).orElse(""))
-                    .append(Optional.ofNullable(location.getState()).map(val -> {
-                        locParams.addValue("state", val);
-                        return " state = :state,";
-                    }).orElse(""))
-                    .append(Optional.ofNullable(location.getCountry()).map(val -> {
-                        locParams.addValue("country", val);
-                        return " country = :country,";
-                    }).orElse(""))
-                    .append(Optional.ofNullable(location.getZipCode()).map(val -> {
-                        locParams.addValue("zipCode", val);
-                        return " zip_code = :zipCode,";
-                    }).orElse(""))
-                    .append(Optional.ofNullable(location.getAddress()).map(val -> {
-                        locParams.addValue("address", val);
-                        return " address = :address,";
-                    }).orElse(""));
+                .append(Optional.ofNullable(accommodationDto.getCity()).map(val -> {
+                    locParams.addValue("city", val);
+                    return " city = :city,";
+                }).orElse(""))
+                .append(Optional.ofNullable(accommodationDto.getState()).map(val -> {
+                    locParams.addValue("state", val);
+                    return " state = :state,";
+                }).orElse(""))
+                .append(Optional.ofNullable(accommodationDto.getCountry()).map(val -> {
+                    locParams.addValue("country", val);
+                    return " country = :country,";
+                }).orElse(""))
+                .append(Optional.ofNullable(accommodationDto.getZipCode()).map(val -> {
+                    locParams.addValue("zipCode", val);
+                    return " zip_code = :zipCode,";
+                }).orElse(""))
+                .append(Optional.ofNullable(accommodationDto.getAddress()).map(val -> {
+                    locParams.addValue("address", val);
+                    return " address = :address,";
+                }).orElse(""));
 
             if (initUpdateLocQuery.equals(locQueryBuilder.toString())) {
                 return null;

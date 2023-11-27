@@ -1,12 +1,12 @@
 package com.wanderers.hotelier_webservices.rest.mapper;
 
-import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody;
-import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
-import com.wanderers.hotelier_webservices.rest.model.Location;
+import com.wanderers.hotelier_webservices.rest.model.*;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.Category;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +21,7 @@ public class AccommodationMapper {
         accommodationDto.setHotelierId(hotelierId);
         accommodationDto.setName(accommodationReq.getName());
         accommodationDto.setRating(accommodationReq.getRating());
-        accommodationDto.setCategory(accommodationReq.getCategory().getValue().toUpperCase());
+        accommodationDto.setCategory(Category.fromValue(accommodationReq.getCategory().getValue()));
         accommodationDto.setCity(accommodationReq.getLocation().getCity());
         accommodationDto.setState(accommodationReq.getLocation().getState());
         accommodationDto.setCountry(accommodationReq.getLocation().getCountry());
@@ -31,6 +31,30 @@ public class AccommodationMapper {
         accommodationDto.setReputation(accommodationReq.getReputation());
         accommodationDto.setPrice(accommodationReq.getPrice());
         accommodationDto.setAvailability(accommodationReq.getAvailability());
+
+        return accommodationDto;
+    }
+
+    public AccommodationDto mapToAccommodationDto(AccommodationPatchBody accommodationPatch, String hotelierId) {
+        final AccommodationDto accommodationDto = new AccommodationDto();
+
+        accommodationDto.setHotelierId(hotelierId);
+        accommodationDto.setName(accommodationPatch.getName());
+        accommodationDto.setRating(accommodationPatch.getRating());
+        accommodationDto.setCategory(Optional.ofNullable(accommodationPatch.getCategory()).map(cat -> Category.fromValue(cat.getValue())).orElse(null));
+        accommodationDto.setImage(accommodationPatch.getImage());
+        accommodationDto.setReputation(accommodationPatch.getReputation());
+        accommodationDto.setPrice(accommodationPatch.getPrice());
+        accommodationDto.setAvailability(accommodationPatch.getAvailability());
+
+        OptionalLocation location = accommodationPatch.getLocation();
+        if (location != null) {
+            accommodationDto.setCity(location.getCity());
+            accommodationDto.setState(location.getState());
+            accommodationDto.setCountry(location.getCountry());
+            accommodationDto.setZipCode(location.getZipCode());
+            accommodationDto.setAddress(location.getAddress());
+        }
 
         return accommodationDto;
     }
@@ -48,11 +72,11 @@ public class AccommodationMapper {
         accommodationRes.setId(accommodationDto.getId());
         accommodationRes.setName(accommodationDto.getName());
         accommodationRes.setRating(accommodationDto.getRating());
-        accommodationRes.setCategory(AccommodationResponseBody.CategoryEnum.fromValue(accommodationDto.getCategory().toLowerCase()));
+        accommodationRes.setCategory(AccommodationResponseBody.CategoryEnum.fromValue(accommodationDto.getCategory().value));
         accommodationRes.setLocation(location);
         accommodationRes.setImage(accommodationDto.getImage());
         accommodationRes.setReputation(accommodationDto.getReputation());
-        accommodationRes.setReputationBadge(accommodationDto.getReputationBadge());
+        accommodationRes.setReputationBadge(ReputationBadgeEnum.fromValue(accommodationDto.getReputationBadge().value));
         accommodationRes.setPrice(accommodationDto.getPrice());
         accommodationRes.setAvailability(accommodationDto.getAvailability());
 

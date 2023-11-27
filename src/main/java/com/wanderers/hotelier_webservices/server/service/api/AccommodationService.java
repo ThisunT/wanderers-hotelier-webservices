@@ -1,8 +1,7 @@
 package com.wanderers.hotelier_webservices.server.service.api;
 
-import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public interface AccommodationService {
     List<AccommodationDto> getAccommodations(String hotelierId,
                                                     Integer rating,
                                                     String city,
-                                                    ReputationBadgeEnum reputationBadge)
+                                                    ReputationBadge reputationBadge)
             throws AccommodationServiceException;
 
     /**
@@ -49,7 +48,7 @@ public interface AccommodationService {
      * @param id
      * @param accommodationDto
      */
-    void patchAccommodation(String id, AccommodationPatchBody accommodationDto) throws AccommodationServiceException;
+    void patchAccommodation(String id, AccommodationDto accommodationDto) throws AccommodationServiceException;
 
     /**
      * Delete an accommodation by id

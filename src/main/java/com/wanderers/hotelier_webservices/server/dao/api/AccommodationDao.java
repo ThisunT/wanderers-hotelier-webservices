@@ -1,8 +1,7 @@
 package com.wanderers.hotelier_webservices.server.dao.api;
 
-import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException;
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
 
@@ -33,7 +32,7 @@ public interface AccommodationDao {
      * @throws AccommodationDaoException
      */
     List<AccommodationDto> getAccommodations(String hotelierId, Integer rating,
-                                                    String city, ReputationBadgeEnum reputationBadge)
+                                                    String city, ReputationBadge reputationBadge)
             throws AccommodationDaoException;
 
     /**
@@ -59,10 +58,10 @@ public interface AccommodationDao {
      * 
      * @param id
      * @param patchDTO
-     * @param reputationBadgeEnum
+     * @param reputationBadge
      * @throws AccommodationDaoException
      */
-    void patchAccommodation(int id, AccommodationPatchBody patchDTO, ReputationBadgeEnum reputationBadgeEnum) throws AccommodationDaoException;
+    void patchAccommodation(int id, AccommodationDto accommodationDto, ReputationBadge reputationBadge) throws AccommodationDaoException;
 
     /**
      * Delete an accommodation

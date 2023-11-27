@@ -1,7 +1,8 @@
 package com.wanderers.hotelier_webservices.server.mapper;
 
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.Category;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -21,7 +22,7 @@ public class AccommodationRowMapper implements RowMapper<AccommodationDto> {
         accommodationRow.setHotelierId(rs.getString("hotelier_id"));
         accommodationRow.setName(rs.getString("name"));
         accommodationRow.setRating(Integer.parseInt(rs.getString("rating")));
-        accommodationRow.setCategory(rs.getString("category"));
+        accommodationRow.setCategory(Category.fromValue(rs.getString("category").toLowerCase()));
         accommodationRow.setCity(rs.getString("city"));
         accommodationRow.setState(rs.getString("state"));
         accommodationRow.setCountry(rs.getString("country"));
@@ -29,7 +30,7 @@ public class AccommodationRowMapper implements RowMapper<AccommodationDto> {
         accommodationRow.setAddress(rs.getString("address"));
         accommodationRow.setImage(rs.getString("image"));
         accommodationRow.setReputation(Integer.parseInt(rs.getString("reputation")));
-        accommodationRow.setReputationBadge(ReputationBadgeEnum.fromValue(rs.getString("reputation_badge").toLowerCase()));
+        accommodationRow.setReputationBadge(ReputationBadge.fromValue(rs.getString("reputation_badge").toLowerCase()));
         accommodationRow.setPrice(Integer.parseInt(rs.getString("price")));
         accommodationRow.setAvailability(Integer.parseInt(rs.getString("availability")));
 

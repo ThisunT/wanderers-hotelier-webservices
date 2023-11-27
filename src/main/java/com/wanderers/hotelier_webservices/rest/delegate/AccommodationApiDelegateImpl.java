@@ -9,6 +9,7 @@ import com.wanderers.hotelier_webservices.rest.model.AccommodationResponseBody;
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.rest.validate.AccommodationValidator;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import com.wanderers.hotelier_webservices.server.service.api.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,7 +57,8 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
                                                                              String city,
                                                                              ReputationBadgeEnum reputationBadge) {
 
-        List<AccommodationDto> accommodationDTOs = accommodationService.getAccommodations(hotelierId, rating, city, reputationBadge);
+        List<AccommodationDto> accommodationDTOs = accommodationService.getAccommodations(hotelierId, rating,
+                city, ReputationBadge.fromValue(reputationBadge.getValue()));
         List<AccommodationResponseBody> accommodationsResponse = accommodationMapper.mapToRestAccommodations(accommodationDTOs);
 
         return new ResponseEntity<>(accommodationsResponse, HttpStatus.OK);
@@ -76,7 +78,8 @@ public class AccommodationApiDelegateImpl extends AbstractApiDelegate implements
         var hotelierId = getHotelierId();
         validator.validateAccommodationPatch(id, body, hotelierId);
 
-        accommodationService.patchAccommodation(id, body);
+        AccommodationDto accommodationReqDto = accommodationMapper.mapToAccommodationDto(body, hotelierId);
+        accommodationService.patchAccommodation(id, accommodationReqDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

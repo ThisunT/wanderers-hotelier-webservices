@@ -1,8 +1,8 @@
 package com.wanderers.hotelier_webservices.server.component;
 
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.dao.impl.AccommodationDaoImpl;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,10 +47,10 @@ public class AccommodationCache {
     public List<AccommodationDto> getAccommodations(String hotelierId,
                                                     Integer rating,
                                                     String city,
-                                                    ReputationBadgeEnum reputationBadge) {
+                                                    ReputationBadge reputationBadge) {
         String key = hotelierId + Optional.ofNullable(String.valueOf(rating)).orElse("") +
                 Optional.ofNullable(city).orElse("") +
-                Optional.ofNullable(reputationBadge).map(ReputationBadgeEnum::getValue).orElse("");
+                Optional.ofNullable(reputationBadge).map(val -> val.value).orElse("");
 
         requestAccessTimeMap.computeIfAbsent(key, k -> LocalTime.now());
         return accommodationCriteriaValueMap.computeIfAbsent(key, k -> accommodationDao.getAccommodations(hotelierId, rating, city, reputationBadge));

@@ -1,10 +1,9 @@
 package com.wanderers.hotelier_webservices.server.service.impl;
 
-import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody;
-import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum;
 import com.wanderers.hotelier_webservices.server.component.AccommodationCache;
 import com.wanderers.hotelier_webservices.server.dao.api.AccommodationDao;
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto;
+import com.wanderers.hotelier_webservices.server.dto.ReputationBadge;
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException;
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException;
 import com.wanderers.hotelier_webservices.server.service.api.AccommodationService;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.wanderers.hotelier_webservices.server.dto.ReputationBadge.*;
 
 @Service("accommodation_service")
 public class AccommodationServiceImpl implements AccommodationService {
@@ -43,7 +44,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     public List<AccommodationDto> getAccommodations(String hotelierId,
                                                     Integer rating,
                                                     String city,
-                                                    ReputationBadgeEnum reputationBadge) {
+                                                    ReputationBadge reputationBadge) {
         try {
             return accommodationCache.getAccommodations(hotelierId, rating, city, reputationBadge);
         } catch (Exception e) {
@@ -65,7 +66,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @SneakyThrows
     @Override
-    public void patchAccommodation(String id, AccommodationPatchBody accommodationDto) {
+    public void patchAccommodation(String id, AccommodationDto accommodationDto) {
         try {
             if (accommodationDto.getReputation() != null) {
                 accommodationDao.patchAccommodation(Integer.parseInt(id), accommodationDto, getReputationBadge(accommodationDto.getReputation()));
@@ -100,11 +101,11 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
     }
 
-    private ReputationBadgeEnum getReputationBadge(int reputation) {
+    private ReputationBadge getReputationBadge(int reputation) {
         if (reputation <= 500) {
-            return ReputationBadgeEnum.red;
+            return RED;
         }
-        return reputation <= 799 ? ReputationBadgeEnum.yellow : ReputationBadgeEnum.green;
+        return reputation <= 799 ? YELLOW : GREEN;
     }
 
 }
