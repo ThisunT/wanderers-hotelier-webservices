@@ -4,35 +4,29 @@ import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
-import java.sql.SQLException
-import java.util.*
 
 /**
  * Class is responsible for mapping a database accommodation entity into a server object
  */
 class AccommodationRowMapper : RowMapper<AccommodationDto> {
-    @kotlin.Throws(SQLException::class)
     override fun mapRow(rs: ResultSet, rowNum: Int): AccommodationDto {
-        val accommodationRow = AccommodationDto()
-        accommodationRow.id = rs.getString("id").toInt()
-        accommodationRow.hotelierId = rs.getString("hotelier_id")
-        accommodationRow.name = rs.getString("name")
-        accommodationRow.rating = rs.getString("rating").toInt()
-        accommodationRow.category = rs.getString("category")
-        accommodationRow.city = rs.getString("city")
-        accommodationRow.state = rs.getString("state")
-        accommodationRow.country = rs.getString("country")
-        accommodationRow.zipCode = rs.getString("zip_code")
-        accommodationRow.address = rs.getString("address")
-        accommodationRow.image = rs.getString("image")
-        accommodationRow.reputation = rs.getString("reputation").toInt()
-        accommodationRow.reputationBadge = ReputationBadgeEnum.fromValue(
-            rs.getString("reputation_badge").lowercase(
-                Locale.getDefault()
-            )
+
+        return AccommodationDto(
+            id = rs.getInt("id"),
+            hotelierId = rs.getString("hotelier_id"),
+            name = rs.getString("name"),
+            rating = rs.getInt("rating"),
+            category = rs.getString("category"),
+            city = rs.getString("city"),
+            state = rs.getString("state"),
+            country = rs.getString("country"),
+            zipCode = rs.getString("zip_code"),
+            address = rs.getString("address"),
+            image = rs.getString("image"),
+            reputation = rs.getInt("reputation"),
+            reputationBadge = ReputationBadgeEnum.valueOf(rs.getString("reputation_badge").lowercase()),
+            price = rs.getInt("price"),
+            availability = rs.getInt("availability")
         )
-        accommodationRow.price = rs.getString("price").toInt()
-        accommodationRow.availability = rs.getString("availability").toInt()
-        return accommodationRow
     }
 }

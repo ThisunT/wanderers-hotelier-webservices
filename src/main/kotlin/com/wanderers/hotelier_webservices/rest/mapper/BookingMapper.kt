@@ -10,12 +10,10 @@ import org.springframework.stereotype.Component
 @Component("booking_mapper")
 class BookingMapper {
     fun mapToBookingDto(booking: Booking): BookingDto {
-        return BookingDto(booking.accommodationId, booking.customerId)
+        return BookingDto(booking.accommodationId!!, booking.customerId!!)
     }
 
     fun mapToRestBooking(bookingDto: BookingDto): Booking {
-        return Booking()
-            .accommodationId(bookingDto.getAccommodationId())
-            .customerId(bookingDto.getCustomerId())
+        return Booking(bookingDto.accommodationId, bookingDto.customerId)
     }
 }

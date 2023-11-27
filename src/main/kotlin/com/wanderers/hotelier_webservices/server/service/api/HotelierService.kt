@@ -11,5 +11,5 @@ interface HotelierService {
      * @throws HotelierServiceException
      */
     @kotlin.Throws(HotelierServiceException::class)
-    fun isExistingHotelier(hotelierId: String?): Boolean?
+    fun isExistingHotelier(hotelierId: String): Boolean
 }

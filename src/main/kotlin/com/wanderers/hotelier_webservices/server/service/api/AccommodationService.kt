@@ -16,7 +16,7 @@ interface AccommodationService {
      * @return [AccommodationDto]
      */
     @kotlin.Throws(AccommodationServiceException::class)
-    fun create(accommodationDto: AccommodationDto?): AccommodationDto?
+    fun create(accommodationDto: AccommodationDto): AccommodationDto
 
     /**
      * Retrieve accommodations for the given criteria
@@ -29,11 +29,11 @@ interface AccommodationService {
      */
     @kotlin.Throws(AccommodationServiceException::class)
     fun getAccommodations(
-        hotelierId: String?,
+        hotelierId: String,
         rating: Int?,
         city: String?,
         reputationBadge: ReputationBadgeEnum?
-    ): List<AccommodationDto?>?
+    ): List<AccommodationDto>
 
     /**
      * Retrieve accommodation by id
@@ -42,7 +42,7 @@ interface AccommodationService {
      * @return [AccommodationDto]
      */
     @kotlin.Throws(AccommodationServiceException::class)
-    fun getAccommodation(id: String?): AccommodationDto?
+    fun getAccommodation(id: String): AccommodationDto
 
     /**
      * Update an accommodation by id with a set of modified field values
@@ -51,14 +51,14 @@ interface AccommodationService {
      * @param accommodationDto
      */
     @kotlin.Throws(AccommodationServiceException::class)
-    fun patchAccommodation(id: String?, accommodationDto: AccommodationPatchBody?)
+    fun patchAccommodation(id: String, accommodationDto: AccommodationPatchBody)
 
     /**
      * Delete an accommodation by id
      * @param id
      */
     @kotlin.Throws(AccommodationServiceException::class)
-    fun deleteAccommodation(id: String?)
+    fun deleteAccommodation(id: String)
 
     /**
      * Get hotelier id given the accommodation id
@@ -68,5 +68,5 @@ interface AccommodationService {
      * @throws AccommodationServiceException
      */
     @kotlin.Throws(AccommodationServiceException::class)
-    fun getHotelierByAccommodationId(id: String?): String?
+    fun getHotelierByAccommodationId(id: String): String
 }

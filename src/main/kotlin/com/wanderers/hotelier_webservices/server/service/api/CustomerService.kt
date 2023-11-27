@@ -11,5 +11,5 @@ interface CustomerService {
      * @throws CustomerServiceException
      */
     @kotlin.Throws(CustomerServiceException::class)
-    fun isExistingCustomer(customerId: Int): Boolean?
+    fun isExistingCustomer(customerId: Int): Boolean
 }

@@ -15,5 +15,5 @@ interface BookingDao {
      * @throws BookingDaoException
      */
     @kotlin.Throws(BookingDaoException::class)
-    fun create(booking: BookingDto?): BookingDto?
+    fun create(booking: BookingDto): BookingDto
 }

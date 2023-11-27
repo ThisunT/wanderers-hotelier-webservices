@@ -1,5 +1,6 @@
 package com.wanderers.hotelier_webservices.rest.exception.handler
 
+import com.wanderers.hotelier_webservices.rest.exception.handler.ExceptionResponseEntityProvider.getExceptionResponse
 import com.wanderers.hotelier_webservices.server.exception.BookingUnavailableException
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException
 import com.wanderers.hotelier_webservices.server.exception.ServerException

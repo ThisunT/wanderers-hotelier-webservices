@@ -35,33 +35,25 @@ class AccommodationCache @Autowired internal constructor(accommodationDao: Accom
     }
 
     fun getAccommodation(id: Int): AccommodationDto {
-        requestAccessTimeMap.computeIfAbsent(
-            id.toString()
-        ) { k: String? -> LocalTime.now() }
+        requestAccessTimeMap.computeIfAbsent(id.toString()
+        ) { _ -> LocalTime.now() }
         return accommodationIdValueMap.computeIfAbsent(
             id
-        ) { id: Int? ->
-            accommodationDao.getAccommodation(
-                id!!
-            )
-        }
+        ) { accommodationDao.getAccommodation(id) }
     }
 
     fun getAccommodations(
         hotelierId: String,
-        rating: Int,
+        rating: Int?,
         city: String?,
         reputationBadge: ReputationBadgeEnum?
     ): List<AccommodationDto> {
         val key = hotelierId + Optional.ofNullable(rating.toString()).orElse("") +
                 Optional.ofNullable(city).orElse("") +
                 Optional.ofNullable(reputationBadge).map(ReputationBadgeEnum::value).orElse("")
-        requestAccessTimeMap.computeIfAbsent(
-            key
-        ) { k: String? -> LocalTime.now() }
-        return accommodationCriteriaValueMap.computeIfAbsent(
-            key
-        ) { k: String? ->
+
+        requestAccessTimeMap.computeIfAbsent(key) { _ -> LocalTime.now() }
+        return accommodationCriteriaValueMap.computeIfAbsent(key) { _ ->
             accommodationDao.getAccommodations(
                 hotelierId,
                 rating,
@@ -80,7 +72,12 @@ class AccommodationCache @Autowired internal constructor(accommodationDao: Accom
     }
 
     private fun clearCache() {
-        for ((key, value): Map.Entry<String, LocalTime> in requestAccessTimeMap) {
+        val iterator = requestAccessTimeMap.entries.iterator()
+        while (iterator.hasNext()) {
+            val entry = iterator.next()
+            val key: String = entry.key
+            val value: LocalTime = entry.value
+
             if (value.until(LocalTime.now(), ChronoUnit.SECONDS) >= TTL_IN_SEC) {
                 try {
                     val intKey: Int = key.toInt()
@@ -88,7 +85,7 @@ class AccommodationCache @Autowired internal constructor(accommodationDao: Accom
                 } catch (ex: NumberFormatException) {
                     accommodationCriteriaValueMap.remove(key)
                 } finally {
-                    requestAccessTimeMap.remove(key)
+                    iterator.remove()
                 }
             }
         }

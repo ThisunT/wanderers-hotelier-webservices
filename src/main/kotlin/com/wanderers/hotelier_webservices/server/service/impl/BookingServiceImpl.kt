@@ -7,7 +7,6 @@ import com.wanderers.hotelier_webservices.server.exception.BookingServiceExcepti
 import com.wanderers.hotelier_webservices.server.exception.BookingUnavailableException
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException
 import com.wanderers.hotelier_webservices.server.service.api.BookingService
-import lombok.SneakyThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,16 +25,15 @@ class BookingServiceImpl @Autowired internal constructor(accommodationDao: Accom
         this.bookingDao = bookingDao
     }
 
-    @SneakyThrows
     @Transactional
-    override fun create(booking: BookingDto?): BookingDto? {
-        return try {
-            val availability: Int = accommodationDao.getAvailabilityByAccommodation(booking.getAccommodationId())
+    override fun create(booking: BookingDto): BookingDto {
+        try {
+            val availability: Int = accommodationDao.getAvailabilityByAccommodation(booking.accommodationId)
             if (availability > 0) {
-                accommodationDao.setAvailabilityByAccommodation(booking.getAccommodationId(), availability - 1)
-                bookingDao.create(booking)
+                accommodationDao.setAvailabilityByAccommodation(booking.accommodationId, availability - 1)
+                return bookingDao.create(booking)
             } else {
-                throw BookingUnavailableException("Bookings are unavailable for accommodation: " + booking.getAccommodationId())
+                throw BookingUnavailableException("Bookings are unavailable for accommodation: " + booking.accommodationId)
             }
         } catch (e: ResultNotFoundException) {
             throw e

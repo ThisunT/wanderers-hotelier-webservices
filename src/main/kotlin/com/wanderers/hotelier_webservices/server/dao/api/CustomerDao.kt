@@ -14,5 +14,5 @@ interface CustomerDao {
      * @throws CustomerDaoException
      */
     @kotlin.Throws(CustomerDaoException::class)
-    fun isExistingCustomer(customerId: Int): Boolean?
+    fun isExistingCustomer(customerId: Int): Boolean
 }

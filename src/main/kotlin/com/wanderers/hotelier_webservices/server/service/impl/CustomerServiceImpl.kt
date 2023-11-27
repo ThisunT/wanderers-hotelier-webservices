@@ -15,7 +15,7 @@ class CustomerServiceImpl @Autowired internal constructor(customerDao: CustomerD
     }
 
     @kotlin.Throws(CustomerServiceException::class)
-    override fun isExistingCustomer(customerId: Int): Boolean? {
+    override fun isExistingCustomer(customerId: Int): Boolean {
         return try {
             customerDao.isExistingCustomer(customerId)
         } catch (e: Exception) {

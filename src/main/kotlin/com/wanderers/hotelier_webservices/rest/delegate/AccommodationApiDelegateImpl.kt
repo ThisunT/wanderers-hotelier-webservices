@@ -1,7 +1,6 @@
 package com.wanderers.hotelier_webservices.rest.delegate
 
 import com.wanderers.hotelier_webservices.rest.api.AccommodationApiDelegate
-import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException
 import com.wanderers.hotelier_webservices.rest.mapper.AccommodationMapper
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody
@@ -14,17 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import java.util.*
-import javax.servlet.http.HttpServletRequest
 
 /**
  * Class implements the endpoints of accommodation resource.
  */
 @Service("accommodation_api_delegate")
-class AccommodationApiDelegateImpl @Autowired internal constructor(
-    servletRequest: HttpServletRequest?, accommodationMapper: AccommodationMapper,
-    accommodationService: AccommodationService, validator: AccommodationValidator
-) : AbstractApiDelegate(servletRequest!!), AccommodationApiDelegate {
+class AccommodationApiDelegateImpl @Autowired internal constructor(accommodationMapper: AccommodationMapper,
+                                                                   accommodationService: AccommodationService, validator: AccommodationValidator
+) : AccommodationApiDelegate {
     private val validator: AccommodationValidator
     private val accommodationMapper: AccommodationMapper
     private val accommodationService: AccommodationService
@@ -35,12 +31,13 @@ class AccommodationApiDelegateImpl @Autowired internal constructor(
         this.validator = validator
     }
 
-    fun createAccommodation(accommodationRequest: AccommodationRequestBody?): ResponseEntity<AccommodationResponseBody> {
-        val hotelierId = hotelierId
-        validator.validateAccommodationReq(accommodationRequest!!, hotelierId)
-        val accommodationReqDto = accommodationMapper.mapToAccommodationDto(accommodationRequest, hotelierId)
+    override fun createAccommodation(hotelierId: String, accommodationRequestBody: AccommodationRequestBody): ResponseEntity<AccommodationResponseBody> {
+        validator.validateAccommodationReq(accommodationRequestBody, hotelierId)
+
+        val accommodationReqDto = accommodationMapper.mapToAccommodationDto(accommodationRequestBody, hotelierId)
         val accommodationResDto: AccommodationDto = accommodationService.create(accommodationReqDto)
         val accommodationResponse = accommodationMapper.mapToRestAccommodation(accommodationResDto)
+
         return ResponseEntity(accommodationResponse, HttpStatus.CREATED)
     }
 
@@ -62,25 +59,15 @@ class AccommodationApiDelegateImpl @Autowired internal constructor(
         return ResponseEntity(accommodationsResponse, HttpStatus.OK)
     }
 
-    fun updateAccommodationById(id: String?, body: AccommodationPatchBody?): ResponseEntity<Void> {
-        val hotelierId = hotelierId
-        validator.validateAccommodationPatch(id!!, body!!, hotelierId)
-        accommodationService.patchAccommodation(id, body)
+    override fun updateAccommodationById(hotelierId: String, id: String, accommodationPatchBody: AccommodationPatchBody): ResponseEntity<Unit> {
+        validator.validateAccommodationPatch(id, accommodationPatchBody, hotelierId)
+        accommodationService.patchAccommodation(id, accommodationPatchBody)
         return ResponseEntity(HttpStatus.OK)
     }
 
-    fun deleteAccommodationById(id: String?): ResponseEntity<Void> {
-        val hotelierId = hotelierId
-        validator.validateHotelier(hotelierId, id!!)
+    override fun deleteAccommodationById(hotelierId: String, id: String): ResponseEntity<Unit> {
+        validator.validateHotelier(hotelierId, id)
         accommodationService.deleteAccommodation(id)
         return ResponseEntity(HttpStatus.NO_CONTENT)
     }
-
-    private val hotelierId: String
-        private get() = Optional.ofNullable(getServletRequest().getHeader("Hotelier-Id"))
-            .orElseThrow {
-                ResourceNotFoundException(
-                    "Hotelier-Id header cannot be null"
-                )
-            }
 }

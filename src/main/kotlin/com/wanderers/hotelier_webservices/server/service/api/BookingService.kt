@@ -16,5 +16,5 @@ interface BookingService {
      * @return [BookingDto]
      */
     @kotlin.Throws(BookingServiceException::class, BookingUnavailableException::class, ResultNotFoundException::class)
-    fun create(booking: BookingDto?): BookingDto?
+    fun create(booking: BookingDto): BookingDto
 }

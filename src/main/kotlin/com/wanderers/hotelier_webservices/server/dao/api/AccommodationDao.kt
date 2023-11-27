@@ -18,7 +18,7 @@ interface AccommodationDao {
      * @throws AccommodationDaoException
      */
     @kotlin.Throws(AccommodationDaoException::class)
-    fun create(accommodationDto: AccommodationDto?): AccommodationDto?
+    fun create(accommodationDto: AccommodationDto): AccommodationDto
 
     /**
      * Get accommodation entities by a given criteria
@@ -32,9 +32,9 @@ interface AccommodationDao {
      */
     @kotlin.Throws(AccommodationDaoException::class)
     fun getAccommodations(
-        hotelierId: String?, rating: Int?,
+        hotelierId: String, rating: Int?,
         city: String?, reputationBadge: ReputationBadgeEnum?
-    ): List<AccommodationDto?>?
+    ): List<AccommodationDto>
 
     /**
      * Get an accommodation by id
@@ -53,7 +53,8 @@ interface AccommodationDao {
      * @param id
      * @return Hotelier Id
      */
-    fun getHotelierByAccommodationId(id: Int): String?
+    @kotlin.Throws(AccommodationDaoException::class, ResultNotFoundException::class)
+    fun getHotelierByAccommodationId(id: Int): String
 
     /**
      * Update accommodation by provided new field values
@@ -64,7 +65,7 @@ interface AccommodationDao {
      * @throws AccommodationDaoException
      */
     @kotlin.Throws(AccommodationDaoException::class)
-    fun patchAccommodation(id: Int, patchDTO: AccommodationPatchBody?, reputationBadgeEnum: ReputationBadgeEnum?)
+    fun patchAccommodation(id: Int, patchDTO: AccommodationPatchBody, reputationBadgeEnum: ReputationBadgeEnum?)
 
     /**
      * Delete an accommodation
@@ -81,7 +82,7 @@ interface AccommodationDao {
      * @throws ResultNotFoundException
      */
     @kotlin.Throws(AccommodationDaoException::class, ResultNotFoundException::class)
-    fun getAvailabilityByAccommodation(id: Int): Int?
+    fun getAvailabilityByAccommodation(id: Int): Int
 
     /**
      * Set the updated availability of an accommodation

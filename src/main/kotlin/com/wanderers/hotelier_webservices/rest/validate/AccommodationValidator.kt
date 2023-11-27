@@ -4,16 +4,13 @@ import com.wanderers.hotelier_webservices.rest.exception.InvalidPayloadException
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException
 import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierException
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody
-import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBodyLocation
 import com.wanderers.hotelier_webservices.rest.model.AccommodationRequestBody
+import com.wanderers.hotelier_webservices.rest.model.OptionalLocation
 import com.wanderers.hotelier_webservices.server.service.api.AccommodationService
 import com.wanderers.hotelier_webservices.server.service.api.HotelierService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.lang.Boolean
 import java.util.*
-import kotlin.NumberFormatException
-import kotlin.String
 
 @Component("accommodation_validator")
 class AccommodationValidator @Autowired internal constructor(
@@ -27,30 +24,26 @@ class AccommodationValidator @Autowired internal constructor(
     }
 
     fun validateAccommodationPatch(
-        accommodationId: String?,
+        accommodationId: String,
         accommodationPatchBody: AccommodationPatchBody,
         hotelierId: String
     ) {
         validateHotelier(hotelierId, accommodationId)
-        Optional.ofNullable(accommodationPatchBody.name).ifPresent { name: String ->
-            validateName(
-                name
-            )
-        }
+        Optional.ofNullable(accommodationPatchBody.name).ifPresent { name: String -> validateName(name) }
         Optional.ofNullable(accommodationPatchBody.location)
-            .flatMap { (_, _, _, zipCode): AccommodationPatchBodyLocation ->
+            .flatMap { (_, _, _, zipCode): OptionalLocation ->
                 Optional.ofNullable(
                     zipCode
                 )
             }.ifPresent { zipCode: String -> validateZipCode(zipCode) }
     }
 
-    fun validateHotelier(hotelierId: String, accommodationId: String?) {
+    fun validateHotelier(hotelierId: String, accommodationId: String) {
         validateHotelierId(hotelierId)
         validateHotelierAuthority(accommodationId, hotelierId)
     }
 
-    private fun validateHotelierAuthority(id: String?, hotelierId: String) {
+    private fun validateHotelierAuthority(id: String, hotelierId: String) {
         val hotelierOfAccommodation = accommodationService.getHotelierByAccommodationId(id)
         if (hotelierOfAccommodation != hotelierId) {
             throw UnauthorizedHotelierException("Hotelier: $hotelierId is not authorized to alter the record")
@@ -58,7 +51,7 @@ class AccommodationValidator @Autowired internal constructor(
     }
 
     private fun validateHotelierId(hotelierId: String) {
-        if (Boolean.FALSE == hotelierService.isExistingHotelier(hotelierId)) {
+        if (!hotelierService.isExistingHotelier(hotelierId)) {
             throw ResourceNotFoundException("Hotelier: $hotelierId does not exists in the system. Please register!")
         }
     }
@@ -82,6 +75,6 @@ class AccommodationValidator @Autowired internal constructor(
 
     companion object {
         private val INVALID_ACCOMMODATION_NAMES: Set<String> =
-            HashSet(Arrays.asList("free", "offer", "book", "website"))
+            HashSet(listOf("free", "offer", "book", "website"))
     }
 }

@@ -1,9 +1,8 @@
 package com.wanderers.hotelier_webservices.server.dao.impl
 
-import com.wanderers.hotelier_webservices.mapper.AccommodationRowMapper
 import com.wanderers.hotelier_webservices.rest.model.AccommodationPatchBody
 import com.wanderers.hotelier_webservices.rest.model.ReputationBadgeEnum
-import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.*
+import com.wanderers.hotelier_webservices.server.dao.api.AccommodationDao
 import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.DELETE_ACCOMMODATION_BY_ID
 import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.GET_ACCOMMODATION_BY_ID
 import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.GET_AVAILABILITY_BY_ACC_ID
@@ -13,7 +12,7 @@ import com.wanderers.hotelier_webservices.server.dao.constants.QueryConstants.UP
 import com.wanderers.hotelier_webservices.server.dto.AccommodationDto
 import com.wanderers.hotelier_webservices.server.exception.AccommodationDaoException
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException
-import lombok.SneakyThrows
+import com.wanderers.hotelier_webservices.server.mapper.AccommodationRowMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -26,9 +25,12 @@ import java.util.*
  * Class is responsible for datasource manipulations of accommodation
  */
 @Repository("accommodation_dao")
-class AccommodationDaoImpl @Autowired internal constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
+class AccommodationDaoImpl @Autowired constructor(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) :
+    AccommodationDao  {
+
     @Throws(AccommodationDaoException::class)
-    fun create(accommodationDto: AccommodationDto): AccommodationDto {
+    override fun create(accommodationDto: AccommodationDto): AccommodationDto {
+
         return try {
             val params = MapSqlParameterSource()
                 .addValue("name", accommodationDto.name)
@@ -45,10 +47,9 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
                 .addValue("price", accommodationDto.price)
                 .addValue("availability", accommodationDto.availability)
                 .addValue("hotelierId", accommodationDto.hotelierId)
+
             namedParameterJdbcTemplate.query(INSERT_ACCOMMODATION, params) { resultSet ->
-                accommodationDto.setId(
-                    resultSet.getString("id").toInt()
-                )
+                accommodationDto.id = resultSet.getString("id").toInt()
             }
             accommodationDto
         } catch (e: Exception) {
@@ -57,8 +58,8 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
     }
 
     @Throws(AccommodationDaoException::class)
-    fun getAccommodations(
-        hotelierId: String?, rating: Int?,
+    override fun getAccommodations(
+        hotelierId: String, rating: Int?,
         city: String?, reputationBadge: ReputationBadgeEnum?
     ): List<AccommodationDto> {
         return try {
@@ -85,7 +86,7 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
     }
 
     @Throws(AccommodationDaoException::class, ResultNotFoundException::class)
-    fun getAccommodation(id: Int): AccommodationDto {
+    override fun getAccommodation(id: Int): AccommodationDto? {
         return try {
             val params = MapSqlParameterSource()
             params.addValue("id", id)
@@ -97,8 +98,8 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
         }
     }
 
-    @SneakyThrows
-    fun getHotelierById(id: Int): String {
+    @Throws(AccommodationDaoException::class, ResultNotFoundException::class)
+    override fun getHotelierByAccommodationId(id: Int): String {
         return try {
             val params = MapSqlParameterSource()
             params.addValue("id", id)
@@ -112,7 +113,7 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
 
     @Transactional
     @Throws(AccommodationDaoException::class)
-    fun patchAccommodation(id: Int, patchDTO: AccommodationPatchBody, reputationBadgeEnum: ReputationBadgeEnum) {
+    override fun patchAccommodation(id: Int, patchDTO: AccommodationPatchBody, reputationBadgeEnum: ReputationBadgeEnum?) {
         try {
             val accParams = MapSqlParameterSource()
             val locParams = MapSqlParameterSource()
@@ -130,7 +131,7 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
     }
 
     @Throws(AccommodationDaoException::class)
-    fun deleteAccommodation(id: Int) {
+    override fun deleteAccommodation(id: Int) {
         try {
             val params = MapSqlParameterSource()
             params.addValue("id", id)
@@ -141,7 +142,7 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
     }
 
     @Throws(AccommodationDaoException::class, ResultNotFoundException::class)
-    fun getAvailabilityByAccommodation(id: Int): Int {
+    override fun getAvailabilityByAccommodation(id: Int): Int {
         return try {
             val params = MapSqlParameterSource()
             params.addValue("id", id)
@@ -154,7 +155,7 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
     }
 
     @Throws(AccommodationDaoException::class)
-    fun setAvailabilityByAccommodation(id: Int, newAvailability: Int) {
+    override fun setAvailabilityByAccommodation(id: Int, newAvailability: Int) {
         try {
             val params = MapSqlParameterSource()
             params.addValue("id", id)
@@ -169,7 +170,7 @@ class AccommodationDaoImpl @Autowired internal constructor(private val namedPara
         accParams: MapSqlParameterSource,
         id: Int,
         patchDTO: AccommodationPatchBody,
-        reputationBadgeEnum: ReputationBadgeEnum
+        reputationBadgeEnum: ReputationBadgeEnum?
     ): String? {
         val accQueryBuilder = StringBuilder()
         val initUpdateAccQuery = "UPDATE accommodation SET "

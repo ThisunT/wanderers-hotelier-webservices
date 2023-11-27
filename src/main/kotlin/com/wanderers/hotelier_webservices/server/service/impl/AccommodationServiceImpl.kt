@@ -8,7 +8,6 @@ import com.wanderers.hotelier_webservices.server.dto.AccommodationDto
 import com.wanderers.hotelier_webservices.server.exception.AccommodationServiceException
 import com.wanderers.hotelier_webservices.server.exception.ResultNotFoundException
 import com.wanderers.hotelier_webservices.server.service.api.AccommodationService
-import lombok.SneakyThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -26,32 +25,29 @@ class AccommodationServiceImpl @Autowired internal constructor(
         this.accommodationCache = accommodationCache
     }
 
-    @SneakyThrows
-    override fun create(accommodation: AccommodationDto?): AccommodationDto? {
-        return try {
-            accommodation!!.reputationBadge = getReputationBadge(accommodation.reputation)
-            accommodationDao.create(accommodation)
+    override fun create(accommodationDto: AccommodationDto): AccommodationDto {
+        try {
+            accommodationDto.reputationBadge = getReputationBadge(accommodationDto.reputation)
+            return accommodationDao.create(accommodationDto)
         } catch (e: Exception) {
             throw AccommodationServiceException("Failed creating the accommodation", e)
         }
     }
 
-    @SneakyThrows
     override fun getAccommodations(
-        hotelierId: String?,
+        hotelierId: String,
         rating: Int?,
         city: String?,
         reputationBadge: ReputationBadgeEnum?
-    ): List<AccommodationDto?>? {
+    ): List<AccommodationDto> {
         return try {
-            accommodationCache.getAccommodations(hotelierId!!, rating!!, city, reputationBadge)
+            accommodationCache.getAccommodations(hotelierId, rating, city, reputationBadge)
         } catch (e: Exception) {
             throw AccommodationServiceException("Failed getting the accommodations", e)
         }
     }
 
-    @SneakyThrows
-    override fun getAccommodation(id: String?): AccommodationDto? {
+    override fun getAccommodation(id: String): AccommodationDto {
         return try {
             accommodationCache.getAccommodation(id.toInt())
         } catch (e: ResultNotFoundException) {
@@ -61,10 +57,9 @@ class AccommodationServiceImpl @Autowired internal constructor(
         }
     }
 
-    @SneakyThrows
-    override fun patchAccommodation(id: String?, accommodationDto: AccommodationPatchBody?) {
+    override fun patchAccommodation(id: String, accommodationDto: AccommodationPatchBody) {
         try {
-            if (accommodationDto!!.reputation != null) {
+            if (accommodationDto.reputation != null) {
                 accommodationDao.patchAccommodation(
                     id.toInt(),
                     accommodationDto,
@@ -78,8 +73,7 @@ class AccommodationServiceImpl @Autowired internal constructor(
         }
     }
 
-    @SneakyThrows
-    override fun deleteAccommodation(id: String?) {
+    override fun deleteAccommodation(id: String) {
         try {
             accommodationDao.deleteAccommodation(id.toInt())
         } catch (e: Exception) {
@@ -87,8 +81,7 @@ class AccommodationServiceImpl @Autowired internal constructor(
         }
     }
 
-    @SneakyThrows
-    override fun getHotelierByAccommodationId(id: String?): String? {
+    override fun getHotelierByAccommodationId(id: String): String {
         return try {
             accommodationDao.getHotelierByAccommodationId(id.toInt())
         } catch (e: Exception) {

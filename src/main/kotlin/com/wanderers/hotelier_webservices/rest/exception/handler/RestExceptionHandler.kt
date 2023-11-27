@@ -4,6 +4,7 @@ import com.wanderers.hotelier_webservices.rest.exception.ExpiredTokenException
 import com.wanderers.hotelier_webservices.rest.exception.RESTException
 import com.wanderers.hotelier_webservices.rest.exception.ResourceNotFoundException
 import com.wanderers.hotelier_webservices.rest.exception.UnauthorizedHotelierException
+import com.wanderers.hotelier_webservices.rest.exception.handler.ExceptionResponseEntityProvider.getExceptionResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -36,8 +37,7 @@ class RestExceptionHandler : ResponseEntityExceptionHandler() {
         val exceptionSplit: Array<String> =
             ex.mostSpecificCause.localizedMessage.split(":".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()
-        val errorMsg: String
-        errorMsg = if (exceptionSplit.size > 1) {
+        val errorMsg: String = if (exceptionSplit.size > 1) {
             exceptionSplit[0] + exceptionSplit[exceptionSplit.size - 1]
         } else {
             ex.mostSpecificCause.localizedMessage
@@ -57,8 +57,7 @@ class RestExceptionHandler : ResponseEntityExceptionHandler() {
                 "no field errors present in the MethodArgumentNotValidException"
             )
         }
-        val errMsg: String
-        errMsg = if (fieldError.field == "image") {
+        val errMsg: String = if (fieldError.field == "image") {
             "image must be a valid URL, " + "invalid value " + fieldError.rejectedValue
         } else {
             fieldError.field + " " + fieldError.defaultMessage + ", " + "invalid value " + fieldError.rejectedValue

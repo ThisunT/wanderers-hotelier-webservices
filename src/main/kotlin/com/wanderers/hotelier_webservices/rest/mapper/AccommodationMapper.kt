@@ -13,49 +13,48 @@ import java.util.stream.Collectors
  */
 @Component("accommodation_mapper")
 class AccommodationMapper {
-    fun mapToAccommodationDto(accommodationReq: AccommodationRequestBody, hotelierId: String?): AccommodationDto {
-        val accommodationDto = AccommodationDto()
-        accommodationDto.hotelierId = hotelierId
-        accommodationDto.name = accommodationReq.name
-        accommodationDto.rating = accommodationReq.rating
-        accommodationDto.category = accommodationReq.category.value.uppercase(Locale.getDefault())
-        accommodationDto.city = accommodationReq.location.city
-        accommodationDto.state = accommodationReq.location.state
-        accommodationDto.country = accommodationReq.location.country
-        accommodationDto.zipCode = accommodationReq.location.zipCode
-        accommodationDto.address = accommodationReq.location.address
-        accommodationDto.image = accommodationReq.image
-        accommodationDto.reputation = accommodationReq.reputation
-        accommodationDto.price = accommodationReq.price
-        accommodationDto.availability = accommodationReq.availability
-        return accommodationDto
+    fun mapToAccommodationDto(accommodationReq: AccommodationRequestBody, hotelierId: String): AccommodationDto {
+        return AccommodationDto(
+            null,
+            hotelierId,
+            accommodationReq.name,
+            accommodationReq.rating,
+            accommodationReq.category.value.uppercase(Locale.getDefault()),
+            accommodationReq.location.city,
+            accommodationReq.location.state,
+            accommodationReq.location.country,
+            accommodationReq.location.zipCode,
+            accommodationReq.location.address,
+            accommodationReq.image,
+            accommodationReq.reputation,
+            null,
+            accommodationReq.price,
+            accommodationReq.availability
+        )
     }
 
     fun mapToRestAccommodation(accommodationDto: AccommodationDto): AccommodationResponseBody {
-        val accommodationRes = AccommodationResponseBody()
-        val location = Location()
-        location.setCity(accommodationDto.city)
-        location.setState(accommodationDto.state)
-        location.setCountry(accommodationDto.country)
-        location.setZipCode(accommodationDto.zipCode)
-        location.setAddress(accommodationDto.address)
-        accommodationRes.setId(accommodationDto.id)
-        accommodationRes.setName(accommodationDto.name)
-        accommodationRes.setRating(accommodationDto.rating)
-        accommodationRes.setCategory(
-            AccommodationResponseBody.CategoryEnum.fromValue(
-                accommodationDto.category.lowercase(
-                    Locale.getDefault()
-                )
-            )
+
+        val location = Location(
+            accommodationDto.city,
+            accommodationDto.state,
+            accommodationDto.country,
+            accommodationDto.zipCode,
+            accommodationDto.address
         )
-        accommodationRes.setLocation(location)
-        accommodationRes.setImage(accommodationDto.image)
-        accommodationRes.setReputation(accommodationDto.reputation)
-        accommodationRes.setReputationBadge(accommodationDto.reputationBadge)
-        accommodationRes.setPrice(accommodationDto.price)
-        accommodationRes.setAvailability(accommodationDto.availability)
-        return accommodationRes
+
+        return AccommodationResponseBody(
+            accommodationDto.id!!,
+            accommodationDto.reputationBadge!!,
+            location,
+            accommodationDto.name,
+            accommodationDto.rating,
+            AccommodationResponseBody.Category.valueOf(accommodationDto.category.lowercase()),
+            accommodationDto.image,
+            accommodationDto.reputation,
+            accommodationDto.price,
+            accommodationDto.availability
+        )
     }
 
     fun mapToRestAccommodations(accommodationDTOs: List<AccommodationDto>): List<AccommodationResponseBody> {

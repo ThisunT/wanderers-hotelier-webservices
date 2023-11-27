@@ -14,5 +14,5 @@ interface HotelierDao {
      * @throws HotelierDaoException
      */
     @kotlin.Throws(HotelierDaoException::class)
-    fun isExistingHotelier(hotelierId: String?): Boolean?
+    fun isExistingHotelier(hotelierId: String): Boolean
 }

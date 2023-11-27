@@ -9,10 +9,10 @@ import java.util.*
 import javax.sql.DataSource
 
 @Configuration
-class AppConfig {
+open class AppConfig {
     @Bean
     @Primary
-    fun dataSource(): DataSource {
+    open fun dataSource(): DataSource {
         val props = Properties()
         props.setProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource")
         props.setProperty("dataSource.user", "postgres")

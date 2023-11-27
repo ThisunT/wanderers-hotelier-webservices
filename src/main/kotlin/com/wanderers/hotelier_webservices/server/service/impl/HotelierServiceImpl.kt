@@ -15,7 +15,7 @@ class HotelierServiceImpl @Autowired internal constructor(hotelierDao: HotelierD
     }
 
     @kotlin.Throws(HotelierServiceException::class)
-    override fun isExistingHotelier(hotelierId: String?): Boolean? {
+    override fun isExistingHotelier(hotelierId: String): Boolean {
         return try {
             hotelierDao.isExistingHotelier(hotelierId)
         } catch (e: Exception) {
